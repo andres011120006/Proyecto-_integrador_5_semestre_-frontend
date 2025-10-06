@@ -1,0 +1,70 @@
+/* Contenedor del formulario */
+.reporte-form-container {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  max-width: 500px;
+  margin: auto;
+  padding: 2.5rem 2rem;
+  animation: fadeInUp 0.8s ease forwards;
+  border-radius: 10px;
+  background: #fff;
+}
+
+/* Animación */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reporte-form-container h1 {
+  color: #2e7d32;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.reporte-form-label {
+  font-weight: 600;
+  color: #1b5e20;
+}
+
+/* Botones */
+.reporte-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.reporte-buttons button {
+  flex: 1;
+  padding: 0.9rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.reporte-buttons button:hover {
+  transform: scale(1.05);
+}
+
+.btn-success { background-color: #4caf50; }
+.btn-success:hover { background-color: #388e3c; }
+
+.btn-secondary { background-color: #81c784; }
+.btn-secondary:hover { background-color: #519657; }
+
+/* Mensaje éxito */
+.reporte-success-message {
+  border: 1.5px solid #2e7d32;
+  font-weight: 600;
+  text-align: center;
+  animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

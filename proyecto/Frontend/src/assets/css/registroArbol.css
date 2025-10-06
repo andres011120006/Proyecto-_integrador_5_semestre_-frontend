@@ -1,0 +1,118 @@
+/* Contenedor formulario */
+.arbol-container {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  max-width: 850px;
+  width: 100%;
+  padding: 2.5rem 2rem;
+  margin: auto;
+  animation: fadeInUp 0.8s ease forwards;
+  border-radius: 10px;
+  background: #fff;
+}
+
+
+
+/* Animación fadeInUp */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.arbol-container h1 {
+  color: #2e7d32;
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.arbol-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.arbol-container label {
+  font-weight: 600;
+  color: #1b5e20;
+  margin-bottom: 0.3rem;
+  transition: color 0.3s ease;
+}
+
+.arbol-container input[type="text"],
+.arbol-container input[type="number"],
+.arbol-container select,
+.arbol-container input[type="file"] {
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 1.25rem;
+  border: 2px solid #a5d6a7;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.arbol-container input:focus,
+.arbol-container select:focus {
+  border-color: #388e3c;
+  box-shadow: 0 0 8px #66bb6a88;
+  outline: none;
+}
+
+/* Botones */
+.arbol-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.arbol-btn {
+  flex: 1;
+  padding: 0.9rem 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  background-color: #4caf50;
+  box-shadow: 0 4px 8px #388e3caa;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  user-select: none;
+}
+
+.arbol-btn:hover {
+  background-color: #388e3c;
+  transform: scale(1.05);
+}
+
+.arbol-btn:active {
+  transform: scale(0.98);
+}
+
+.arbol-btn.reset-btn {
+  background-color: #81c784;
+  box-shadow: 0 4px 8px #519657aa;
+}
+
+.arbol-btn.reset-btn:hover {
+  background-color: #519657;
+}
+
+/* Mensaje éxito */
+.arbol-success-message {
+  background-color: #c8e6c9;
+  border: 1.5px solid #2e7d32;
+  color: #2e7d32;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-top: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+  animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
