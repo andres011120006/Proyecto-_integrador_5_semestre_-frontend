@@ -1,178 +1,124 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import MapaMuestra from "./mapa_muestra"; // 🔹 Asegúrate de que el nombre del archivo sea correcto
 import "../assets/css/registroMuestra.css";
 
 const RegistroMuestra = () => {
-  const [formData, setFormData] = useState({
-    latitud: "",
-    longitud: "",
-    tipoMuestra: "",
-    imagen: null,
-  });
+  const [conglomerados, setConglomerados] = useState([]);
+  const [subparcelas, setSubparcelas] = useState([]);
+  const [individuos, setIndividuos] = useState([]);
 
-  const [errors, setErrors] = useState({});
-  const [success, setSuccess] = useState(false);
+  const [selectedConglomerado, setSelectedConglomerado] = useState(null);
+  const [selectedSubparcela, setSelectedSubparcela] = useState(null);
+  const [selectedIndividuo, setSelectedIndividuo] = useState(null);
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    setFormData({ ...formData, [name]: files ? files[0] : value });
-  };
+  //   Cargar conglomerados al iniciar
+  useEffect(() => {
+    fetch("http://localhost:4000/api/conglomerados")
+      .then((res) => res.json())
+      .then((data) => setConglomerados(data))
+      .catch((err) => console.error("Error cargando conglomerados:", err));
+  }, []);
 
-  // Validaciones
-  const validate = () => {
-    let newErrors = {};
-
-    // Latitud
-    const lat = parseFloat(formData.latitud);
-    if (isNaN(lat) || lat < -90 || lat > 90) {
-      newErrors.latitud = "Ingrese una latitud válida (entre -90 y 90).";
+  //  Cargar subparcelas al seleccionar conglomerado
+  useEffect(() => {
+    if (selectedConglomerado) {
+      fetch(`http://localhost:4000/api/subparcelas?conglomerado=${selectedConglomerado.id}`)
+        .then((res) => res.json())
+        .then((data) => setSubparcelas(data))
+        .catch((err) => console.error("Error cargando subparcelas:", err));
+    } else {
+      setSubparcelas([]);
     }
+  }, [selectedConglomerado]);
 
-    // Longitud
-    const lon = parseFloat(formData.longitud);
-    if (isNaN(lon) || lon < -180 || lon > 180) {
-      newErrors.longitud = "Ingrese una longitud válida (entre -180 y 180).";
+  //  Cargar individuos al seleccionar subparcela
+  useEffect(() => {
+    if (selectedSubparcela) {
+      fetch(`http://localhost:4000/api/individuos?subparcela=${selectedSubparcela.id}`)
+        .then((res) => res.json())
+        .then((data) => setIndividuos(data))
+        .catch((err) => console.error("Error cargando individuos:", err));
+    } else {
+      setIndividuos([]);
     }
+  }, [selectedSubparcela]);
 
-    // Tipo de muestra
-    if (!formData.tipoMuestra) {
-      newErrors.tipoMuestra = "Debe seleccionar un tipo de muestra botánica.";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (validate()) {
-      console.log("Formulario válido:", formData);
-
-      setSuccess(true);
-      setFormData({
-        latitud: "",
-        longitud: "",
-        tipoMuestra: "",
-        imagen: null,
-      });
-      setErrors({});
-
-      setTimeout(() => setSuccess(false), 4000);
-    }
+  //  Manejar selección de individuo en el mapa
+  const handleSelectIndividuo = (individuo) => {
+    setSelectedIndividuo(individuo);
+    console.log(" Individuo seleccionado:", individuo);
   };
 
   return (
-    <div className="muestra-form-container" role="main" aria-labelledby="formTitle">
-      <h1 id="formTitle">Registrar Muestra Botánica</h1>
+    <div className="registro-muestra-container">
+      <h2>Registro de Muestra</h2>
 
-      <form onSubmit={handleSubmit} noValidate>
-        {/* Latitud */}
-        <label htmlFor="latitud">
-          Latitud (°) <span style={{ color: "#d32f2f" }}>*</span>
-        </label>
-        <input
-          type="number"
-          id="latitud"
-          name="latitud"
-          value={formData.latitud}
-          onChange={handleChange}
-          placeholder="Ej. 4.5678"
-          step="0.0001"
-          required
-          className={`form-control ${
-            errors.latitud ? "is-invalid" : formData.latitud ? "is-valid" : ""
-          }`}
-        />
-        {errors.latitud && <div className="invalid-feedback">{errors.latitud}</div>}
-
-        {/* Longitud */}
-        <label htmlFor="longitud" className="mt-3">
-          Longitud (°) <span style={{ color: "#d32f2f" }}>*</span>
-        </label>
-        <input
-          type="number"
-          id="longitud"
-          name="longitud"
-          value={formData.longitud}
-          onChange={handleChange}
-          placeholder="Ej. -74.1234"
-          step="0.0001"
-          required
-          className={`form-control ${
-            errors.longitud ? "is-invalid" : formData.longitud ? "is-valid" : ""
-          }`}
-        />
-        {errors.longitud && <div className="invalid-feedback">{errors.longitud}</div>}
-
-        {/* Tipo de muestra */}
-        <label htmlFor="tipoMuestra" className="mt-3">
-          Tipo de muestra botánica <span style={{ color: "#d32f2f" }}>*</span>
-        </label>
+      {/*  Selección de conglomerado */}
+      <div className="form-section">
+        <label>Selecciona un Conglomerado:</label>
         <select
-          id="tipoMuestra"
-          name="tipoMuestra"
-          value={formData.tipoMuestra}
-          onChange={handleChange}
-          required
-          className={`form-select ${
-            errors.tipoMuestra ? "is-invalid" : formData.tipoMuestra ? "is-valid" : ""
-          }`}
+          value={selectedConglomerado?.id || ""}
+          onChange={(e) => {
+            const selected = conglomerados.find((c) => c.id === parseInt(e.target.value));
+            setSelectedConglomerado(selected || null);
+            setSelectedSubparcela(null);
+            setSelectedIndividuo(null);
+          }}
         >
-          <option value="">Seleccione tipo de muestra</option>
-          <option value="muestra esteril">Muestra estéril</option>
-          <option value="muestra fertil">Muestra fértil</option>
+          <option value="">-- Seleccionar --</option>
+          {conglomerados.map((cong) => (
+            <option key={cong.id} value={cong.id}>
+              {cong.nombre_conglomerado}
+            </option>
+          ))}
         </select>
-        {errors.tipoMuestra && (
-          <div className="invalid-feedback">{errors.tipoMuestra}</div>
-        )}
+      </div>
 
-        {/* Imagen */}
-        <label htmlFor="imagen" className="mt-3">
-          Subir imagen (opcional)
-        </label>
-        <input
-          type="file"
-          id="imagen"
-          name="imagen"
-          accept="image/*"
-          onChange={handleChange}
-          className="form-control"
-        />
-        <small style={{ color: "#4caf50", fontSize: "0.85rem" }}>
-          Formatos permitidos: JPG, PNG, GIF
-        </small>
-
-        {/* Botones */}
-        <div className="muestra-form-buttons mt-4">
-          <button type="submit" className="btn btn-success">
-            Guardar
-          </button>
-          <button
-            type="reset"
-            className="btn btn-secondary"
-            onClick={() => {
-              setFormData({
-                latitud: "",
-                longitud: "",
-                tipoMuestra: "",
-                imagen: null,
-              });
-              setErrors({});
-              setSuccess(false);
+      {/*  Selección de subparcela */}
+      {selectedConglomerado && (
+        <div className="form-section">
+          <label>Selecciona una Subparcela:</label>
+          <select
+            value={selectedSubparcela?.id || ""}
+            onChange={(e) => {
+              const selected = subparcelas.find((s) => s.id === parseInt(e.target.value));
+              setSelectedSubparcela(selected || null);
+              setSelectedIndividuo(null);
             }}
           >
-            Limpiar
-          </button>
+            <option value="">-- Seleccionar --</option>
+            {subparcelas.map((sub) => (
+              <option key={sub.id} value={sub.id}>
+                {sub.nombre_subparcela}
+              </option>
+            ))}
+          </select>
         </div>
-      </form>
+      )}
 
-      {/* Mensaje de éxito */}
-        {success && (
-        <div className="alert alert-success mt-3" role="alert">
-            ¡Registro exitoso!
+      {/*  Mapa de individuos */}
+      {selectedSubparcela && (
+        <div className="mapa-section">
+          <h3>Individuos Registrados</h3>
+          <MapaMuestra individuos={individuos} onSelect={handleSelectIndividuo} />
         </div>
-        )}
+      )}
 
+      {/* 🔸 Información del individuo seleccionado */}
+      {selectedIndividuo && (
+        <div className="info-section">
+          <h4>Individuo Seleccionado</h4>
+          <p>
+            <strong>ID:</strong> {selectedIndividuo.id}
+          </p>
+          <p>
+            <strong>Latitud:</strong> {selectedIndividuo.latitud}
+          </p>
+          <p>
+            <strong>Longitud:</strong> {selectedIndividuo.longitud}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
