@@ -3,9 +3,16 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// 🔹 Ícono del individuo
+// 🔹 Ícono del individuo normal (rojo)
 const individuoIcon = new L.Icon({
   iconUrl: "https://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/red-dot.png",
+  iconSize: [30, 30],
+  iconAnchor: [15, 30],
+});
+
+// 🔹 Ícono del individuo seleccionado (verde)
+const individuoSeleccionadoIcon = new L.Icon({
+  iconUrl: "https://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/green-dot.png",
   iconSize: [30, 30],
   iconAnchor: [15, 30],
 });
@@ -14,22 +21,30 @@ const individuoIcon = new L.Icon({
 const ChangeView = ({ center }) => {
   const map = useMap();
   useEffect(() => {
-    if (center) {
+    if (center && Array.isArray(center) && center.length === 2) {
       map.setView(center, 15, { animate: true });
     }
   }, [center, map]);
   return null;
 };
 
-const MapaMuestra = ({ individuos = [], onSelect }) => {
-  // Si hay individuos, centramos el mapa en el primero
+// 🔹 Componente principal del mapa
+const MapaMuestra = ({ individuos = [], onSelect, center, individuoSeleccionado }) => {
+  // Si se pasa un centro desde props, úsalo. Si no, usa el primero disponible.
   const initialPosition =
-    individuos.length > 0
+    center && Array.isArray(center) && center.length === 2
+      ? center
+      : individuos.length > 0 && individuos[0].latitud && individuos[0].longitud
       ? [individuos[0].latitud, individuos[0].longitud]
       : [4.711, -74.0721]; // Bogotá por defecto
 
+  // Filtramos individuos válidos
+  const individuosValidos = individuos.filter(
+    (i) => typeof i.latitud === "number" && typeof i.longitud === "number"
+  );
+
   return (
-    <div style={{ height: "400px", width: "100%" }}>
+    <div style={{ height: "400px", width: "100%", maxWidth: "600px", margin: "0 auto" }}>
       <MapContainer
         center={initialPosition}
         zoom={13}
@@ -46,27 +61,31 @@ const MapaMuestra = ({ individuos = [], onSelect }) => {
           attribution='© OpenStreetMap contributors'
         />
 
-        {/* 🔹 Centrar el mapa al primer individuo */}
+        {/* 🔹 Centrar el mapa al conglomerado seleccionado */}
         <ChangeView center={initialPosition} />
 
-        {/* 🔹 Mostrar todos los individuos como marcadores */}
-        {individuos.map((individuo) => (
-          <Marker
-            key={individuo.id}
-            position={[individuo.latitud, individuo.longitud]}
-            icon={individuoIcon}
-            eventHandlers={{
-              click: () => onSelect(individuo),
-            }}
-          >
-            <Popup>
-              🌳 <strong>{individuo.nombre || "Individuo"}</strong>
-              <br />
-              Lat: {individuo.latitud.toFixed(5)} <br />
-              Lng: {individuo.longitud.toFixed(5)}
-            </Popup>
-          </Marker>
-        ))}
+        {/* 🔹 Mostrar los individuos */}
+        {individuosValidos.map((individuo) => {
+          const isSelected = individuoSeleccionado && individuo.id === individuoSeleccionado.id;
+          return (
+            <Marker
+              key={individuo.id}
+              position={[individuo.latitud, individuo.longitud]}
+              icon={isSelected ? individuoSeleccionadoIcon : individuoIcon}
+              eventHandlers={{
+                click: () => onSelect(individuo),
+              }}
+            >
+              <Popup>
+                🌳 <strong>{individuo.nombre || "Individuo"}</strong>
+                <br />
+                Lat: {individuo.latitud.toFixed(5)} <br />
+                Lng: {individuo.longitud.toFixed(5)}
+                {isSelected && <p style={{ color: "green", fontWeight: "bold" }}>✅ Seleccionado</p>}
+              </Popup>
+            </Marker>
+          );
+        })}
       </MapContainer>
     </div>
   );
