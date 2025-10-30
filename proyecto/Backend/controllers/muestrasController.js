@@ -7,7 +7,6 @@ export const createMuestra = async (req, res) => {
 
     let imagenUrl = null;
 
-    // Subir imagen a Supabase Storage si existe
     if (imagen) {
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from("imagenes-muestras")
@@ -25,7 +24,7 @@ export const createMuestra = async (req, res) => {
       imagenUrl = publicUrl.publicUrl;
     }
 
-    // Insertar en tabla muestra
+ 
     const { data, error } = await supabase.from("muestra").insert([
       {
         id_individuo: idIndividuo,

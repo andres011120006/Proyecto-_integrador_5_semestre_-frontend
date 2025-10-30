@@ -43,7 +43,6 @@ const RegistroArbol = () => {
     setFormData({ ...formData, latitud: lat, longitud: lng });
   };
 
-  // 🔹 Selección de conglomerado (actualiza coordenadas iniciales)
   const handleSelectConglomeradoMapa = (c) => {
     setFormData({
       ...formData,
@@ -79,7 +78,7 @@ const RegistroArbol = () => {
     setLoading(true);
 
     try {
-      // FormData para enviar texto + archivo
+      // Creamos un FormData para enviar texto + archivo
       const dataToSend = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
         if (value) dataToSend.append(key, value);
@@ -192,15 +191,18 @@ const RegistroArbol = () => {
           </>
         )}
 
+{/* PASO 3 */}
 {step === 3 && (
   <>
     <h3>Paso 3: Seleccione la ubicación del individuo</h3>
     <div className="mapa-arbol my-4" style={{ height: "400px" }}>
       <Mapa
-        selectedConglomerado={selectedConglomerado}
-        onSelect={({ lat, lng }) => {
-          setFormData({ ...formData, latitud: lat, longitud: lng });
+        movableMarker
+        initialPosition={{
+          lat: formData.latitud || (selectedConglomerado ? selectedConglomerado.latitud : 4.711),
+          lng: formData.longitud || (selectedConglomerado ? selectedConglomerado.longitud : -74.0721),
         }}
+        onMoveMarker={handleMapClick}
       />
     </div>
 
@@ -239,7 +241,9 @@ const RegistroArbol = () => {
               name="categoria"
               value={formData.categoria}
               onChange={handleChange}
-              className={`form-select ${errors.categoria ? "is-invalid" : ""}`}
+              className={`form-select ${
+                errors.categoria ? "is-invalid" : ""
+              }`}
             >
               <option value="">Seleccione categoría</option>
               <option value="Brinzales">Brinzales (DAP ≤ 10 cm)</option>

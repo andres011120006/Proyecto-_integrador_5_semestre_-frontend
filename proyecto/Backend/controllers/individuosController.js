@@ -3,11 +3,11 @@ import { supabase } from "../config/supabaseClient.js";
 export const createIndividuo = async (req, res) => {
   try {
     const { nombreConglomerado, subparcela, categoria, latitud, longitud } = req.body;
-    const imagen = req.file; // archivo de imagen
+    const imagen = req.file;
 
     let imagenUrl = null;
 
-    // 🔹 Si se sube imagen, la guardamos en el bucket "imagenes-individuos"
+    
     if (imagen) {
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from("imagenes-individuos")
@@ -18,7 +18,7 @@ export const createIndividuo = async (req, res) => {
 
       if (uploadError) throw uploadError;
 
-      // 🔹 Obtener URL pública
+      
       const { data: publicUrl } = supabase.storage
         .from("imagenes-individuos")
         .getPublicUrl(uploadData.path);
@@ -26,7 +26,7 @@ export const createIndividuo = async (req, res) => {
       imagenUrl = publicUrl.publicUrl;
     }
 
-    // 🔹 Insertar en tabla individuo_arboreo
+   
     const { data, error } = await supabase.from("individuo_arboreo").insert([
       {
         nombre_conglomerado: nombreConglomerado,
@@ -53,7 +53,7 @@ export const createIndividuo = async (req, res) => {
 
 
 
-// Traer individuos filtrados
+
 export const getIndividuos = async (req, res) => {
   try {
     const { conglomerado, subparcela } = req.query;

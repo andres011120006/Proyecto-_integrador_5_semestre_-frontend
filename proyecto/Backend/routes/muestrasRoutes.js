@@ -6,7 +6,7 @@ const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// Registrar nueva muestra
+
 router.post("/", upload.single("imagen"), createMuestra);
 
 export default router;

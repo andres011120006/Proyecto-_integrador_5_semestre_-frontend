@@ -3,14 +3,14 @@ import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "re
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// 🔹 Ícono del marcador del conglomerado (azul)
+
 const conglomeradoIcon = new L.Icon({
   iconUrl: "https://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/blue-dot.png",
   iconSize: [30, 30],
   iconAnchor: [15, 30],
 });
 
-// 🔹 Ícono del marcador del individuo (rojo)
+
 const individuoIcon = new L.Icon({
   iconUrl: "https://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/red-dot.png",
   iconSize: [30, 30],
@@ -20,35 +20,35 @@ const individuoIcon = new L.Icon({
 const Mapa = ({ selectedConglomerado, onSelect }) => {
   const [individuoPos, setIndividuoPos] = useState(null);
 
-  // 🔹 Coordenadas iniciales
+ 
   const initialPosition = selectedConglomerado
     ? [selectedConglomerado.latitud, selectedConglomerado.longitud]
-    : [4.711, -74.0721]; // Bogotá por defecto
+    : [4.711, -74.0721]; 
 
-  // 🔹 Componente que detecta clics y permite marcar el individuo
+ 
   const MapClickHandler = () => {
     useMapEvents({
       click(e) {
         const { lat, lng } = e.latlng;
-        setIndividuoPos([lat, lng]); // guarda posición del individuo
-        onSelect({ lat, lng }); // envía al componente padre
+        setIndividuoPos([lat, lng]); 
+        onSelect({ lat, lng }); 
       },
     });
     return null;
   };
 
-  // 🔹 Este componente ajusta el mapa cuando cambia el conglomerado
+ 
   const ChangeView = ({ center }) => {
     const map = useMap();
     useEffect(() => {
       if (center) {
-        map.setView(center, 16, { animate: true }); // 🔍 Zoom automático
+        map.setView(center, 16, { animate: true });
       }
     }, [center, map]);
     return null;
   };
 
-  // 🔹 Resetear marcador del individuo al cambiar conglomerado
+  
   useEffect(() => {
     setIndividuoPos(null);
   }, [selectedConglomerado]);
@@ -65,7 +65,7 @@ const Mapa = ({ selectedConglomerado, onSelect }) => {
         attribution='© OpenStreetMap contributors'
       />
 
-      {/* 🔹 Mueve la vista automáticamente al conglomerado */}
+      
       {selectedConglomerado && (
         <ChangeView
           center={[selectedConglomerado.latitud, selectedConglomerado.longitud]}
@@ -74,7 +74,7 @@ const Mapa = ({ selectedConglomerado, onSelect }) => {
 
       <MapClickHandler />
 
-      {/* 🔹 Marcador del conglomerado */}
+      
       {selectedConglomerado && (
         <Marker
           position={[
@@ -92,7 +92,7 @@ const Mapa = ({ selectedConglomerado, onSelect }) => {
         </Marker>
       )}
 
-      {/* 🔹 Marcador del individuo (si fue seleccionado en el mapa) */}
+      
       {individuoPos && (
         <Marker position={individuoPos} icon={individuoIcon}>
           <Popup>

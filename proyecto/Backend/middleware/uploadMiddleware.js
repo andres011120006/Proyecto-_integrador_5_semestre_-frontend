@@ -1,4 +1,4 @@
 import multer from "multer";
 
-const storage = multer.memoryStorage(); // guarda el archivo en memoria temporal
+const storage = multer.memoryStorage();
 export const upload = multer({ storage });

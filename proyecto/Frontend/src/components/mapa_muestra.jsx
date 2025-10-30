@@ -3,21 +3,21 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// 🔹 Ícono del individuo normal (rojo)
+
 const individuoIcon = new L.Icon({
   iconUrl: "https://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/red-dot.png",
   iconSize: [30, 30],
   iconAnchor: [15, 30],
 });
 
-// 🔹 Ícono del individuo seleccionado (verde)
+
 const individuoSeleccionadoIcon = new L.Icon({
   iconUrl: "https://maps.gstatic.com/intl/en_us/mapfiles/ms/micons/green-dot.png",
   iconSize: [30, 30],
   iconAnchor: [15, 30],
 });
 
-// 🔹 Componente auxiliar para mover el mapa cuando cambian las coordenadas
+
 const ChangeView = ({ center }) => {
   const map = useMap();
   useEffect(() => {
@@ -28,17 +28,17 @@ const ChangeView = ({ center }) => {
   return null;
 };
 
-// 🔹 Componente principal del mapa
+
 const MapaMuestra = ({ individuos = [], onSelect, center, individuoSeleccionado }) => {
-  // Si se pasa un centro desde props, úsalo. Si no, usa el primero disponible.
+ 
   const initialPosition =
     center && Array.isArray(center) && center.length === 2
       ? center
       : individuos.length > 0 && individuos[0].latitud && individuos[0].longitud
       ? [individuos[0].latitud, individuos[0].longitud]
-      : [4.711, -74.0721]; // Bogotá por defecto
+      : [4.711, -74.0721]; 
 
-  // Filtramos individuos válidos
+ 
   const individuosValidos = individuos.filter(
     (i) => typeof i.latitud === "number" && typeof i.longitud === "number"
   );
@@ -61,10 +61,10 @@ const MapaMuestra = ({ individuos = [], onSelect, center, individuoSeleccionado 
           attribution='© OpenStreetMap contributors'
         />
 
-        {/* 🔹 Centrar el mapa al conglomerado seleccionado */}
+
         <ChangeView center={initialPosition} />
 
-        {/* 🔹 Mostrar los individuos */}
+
         {individuosValidos.map((individuo) => {
           const isSelected = individuoSeleccionado && individuo.id === individuoSeleccionado.id;
           return (
