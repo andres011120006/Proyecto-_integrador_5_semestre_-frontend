@@ -8,8 +8,8 @@ const RegistroArbol = () => {
     nombreConglomerado: "",
     subparcela: "",
     categoria: "",
-    latitud: "",
-    longitud: "",
+    latitud: null,
+    longitud: null,
     imagen: null,
   });
 
@@ -38,28 +38,19 @@ const RegistroArbol = () => {
     setFormData({ ...formData, [name]: files ? files[0] : value });
   };
 
-  // 🔹 Manejar selección en mapa
-  const handleMapClick = (lat, lng) => {
+  // 🔹 Manejar selección de conglomerado en mapa
+  const handleSelectConglomeradoMapa = (lat, lng) => {
     setFormData({ ...formData, latitud: lat, longitud: lng });
   };
 
-  const handleSelectConglomeradoMapa = (c) => {
-    setFormData({
-      ...formData,
-      nombreConglomerado: c.nombre,
-      latitud: c.latitud,
-      longitud: c.longitud,
-    });
-  };
-
-  // 🔹 Validación de pasos
+  // 🔹 Validación por pasos
   const validateStep = () => {
     const newErrors = {};
     if (step === 1 && !formData.nombreConglomerado)
       newErrors.nombreConglomerado = "Debe seleccionar un conglomerado.";
     if (step === 2 && !formData.subparcela)
       newErrors.subparcela = "Debe seleccionar una subparcela.";
-    if (step === 3 && (!formData.latitud || !formData.longitud))
+    if (step === 3 && (formData.latitud == null || formData.longitud == null))
       newErrors.mapa = "Debe seleccionar la ubicación del individuo.";
     if (step === 4 && !formData.categoria)
       newErrors.categoria = "Debe seleccionar una categoría.";
@@ -71,32 +62,30 @@ const RegistroArbol = () => {
     if (validateStep()) setStep((prev) => prev + 1);
   };
 
-  // 🔹 Enviar formulario al backend
+  // 🔹 Enviar formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateStep()) return;
     setLoading(true);
 
     try {
-      // Creamos un FormData para enviar texto + archivo
       const dataToSend = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
-        if (value) dataToSend.append(key, value);
+        if (value != null) dataToSend.append(key, value);
       });
 
       await axios.post("http://localhost:4000/api/individuos", dataToSend, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      // ✅ Éxito
       setSuccess(true);
       setStep(1);
       setFormData({
         nombreConglomerado: "",
         subparcela: "",
         categoria: "",
-        latitud: "",
-        longitud: "",
+        latitud: null,
+        longitud: null,
         imagen: null,
       });
       setTimeout(() => setSuccess(false), 4000);
@@ -117,7 +106,7 @@ const RegistroArbol = () => {
       <h1>Registro de Individuo Arbóreo</h1>
 
       <form onSubmit={handleSubmit}>
-        {/* PASO 1 */}
+        {/* PASO 1: Seleccionar conglomerado */}
         {step === 1 && (
           <>
             <h3>Paso 1: Seleccione un conglomerado</h3>
@@ -125,9 +114,7 @@ const RegistroArbol = () => {
               name="nombreConglomerado"
               value={formData.nombreConglomerado}
               onChange={handleChange}
-              className={`form-select ${
-                errors.nombreConglomerado ? "is-invalid" : ""
-              }`}
+              className={`form-select ${errors.nombreConglomerado ? "is-invalid" : ""}`}
             >
               <option value="">Seleccione un conglomerado</option>
               {conglomerados.map((c) => (
@@ -137,29 +124,29 @@ const RegistroArbol = () => {
               ))}
             </select>
             {errors.nombreConglomerado && (
-              <div className="invalid-feedback">
-                {errors.nombreConglomerado}
-              </div>
+              <div className="invalid-feedback">{errors.nombreConglomerado}</div>
             )}
 
             <div className="mapa-arbol my-4" style={{ height: "400px" }}>
               <Mapa
                 selectedConglomerado={selectedConglomerado}
+                movableMarker={true}
+                initialPosition={
+                  selectedConglomerado
+                    ? { lat: selectedConglomerado.latitud, lng: selectedConglomerado.longitud }
+                    : { lat: 4.711, lng: -74.0721 }
+                }
                 onSelect={handleSelectConglomeradoMapa}
               />
             </div>
 
-            <button
-              type="button"
-              className="btn btn-primary mt-3"
-              onClick={handleNext}
-            >
+            <button type="button" className="btn btn-primary mt-3" onClick={handleNext}>
               Siguiente
             </button>
           </>
         )}
 
-        {/* PASO 2 */}
+        {/* PASO 2: Subparcela */}
         {step === 2 && (
           <>
             <h3>Paso 2: Seleccione una subparcela</h3>
@@ -167,9 +154,7 @@ const RegistroArbol = () => {
               name="subparcela"
               value={formData.subparcela}
               onChange={handleChange}
-              className={`form-select ${
-                errors.subparcela ? "is-invalid" : ""
-              }`}
+              className={`form-select ${errors.subparcela ? "is-invalid" : ""}`}
             >
               <option value="">Seleccione subparcela</option>
               <option value="1">1</option>
@@ -181,56 +166,54 @@ const RegistroArbol = () => {
               <div className="invalid-feedback">{errors.subparcela}</div>
             )}
 
-            <button
-              type="button"
-              className="btn btn-primary mt-3"
-              onClick={handleNext}
-            >
+            <button type="button" className="btn btn-primary mt-3" onClick={handleNext}>
               Siguiente
             </button>
           </>
         )}
 
-{/* PASO 3 */}
-{step === 3 && (
-  <>
-    <h3>Paso 3: Seleccione la ubicación del individuo</h3>
-    <div className="mapa-arbol my-4" style={{ height: "400px" }}>
-      <Mapa
-        movableMarker
-        initialPosition={{
-          lat: formData.latitud || (selectedConglomerado ? selectedConglomerado.latitud : 4.711),
-          lng: formData.longitud || (selectedConglomerado ? selectedConglomerado.longitud : -74.0721),
-        }}
-        onMoveMarker={handleMapClick}
-      />
-    </div>
+        {/* PASO 3: Ubicación del individuo */}
+        {step === 3 && (
+          <>
+            <h3>Paso 3: Seleccione la ubicación del individuo</h3>
+            <div className="mapa-arbol my-4" style={{ height: "400px" }}>
+              <Mapa
+                movableMarker={true}
+                selectedConglomerado={selectedConglomerado}
+                initialPosition={{
+                  lat:
+                    formData.latitud ??
+                    (selectedConglomerado ? selectedConglomerado.latitud : 4.711),
+                  lng:
+                    formData.longitud ??
+                    (selectedConglomerado ? selectedConglomerado.longitud : -74.0721),
+                }}
+                onSelect={(lat, lng) =>
+                  setFormData({ ...formData, latitud: lat, longitud: lng })
+                }
+              />
+            </div>
 
-    <p>
-      <strong>Latitud:</strong>{" "}
-      {formData.latitud ? formData.latitud.toFixed(6) : "No definida"}
-    </p>
-    <p>
-      <strong>Longitud:</strong>{" "}
-      {formData.longitud ? formData.longitud.toFixed(6) : "No definida"}
-    </p>
+            <p>
+              <strong>Latitud:</strong>{" "}
+              {formData.latitud != null ? formData.latitud.toFixed(6) : "No definida"}
+            </p>
+            <p>
+              <strong>Longitud:</strong>{" "}
+              {formData.longitud != null ? formData.longitud.toFixed(6) : "No definida"}
+            </p>
 
-    {errors.mapa && (
-      <div className="invalid-feedback d-block">{errors.mapa}</div>
-    )}
+            {errors.mapa && (
+              <div className="invalid-feedback d-block">{errors.mapa}</div>
+            )}
 
-    <button
-      type="button"
-      className="btn btn-primary mt-3"
-      onClick={handleNext}
-    >
-      Siguiente
-    </button>
-  </>
-)}
+            <button type="button" className="btn btn-primary mt-3" onClick={handleNext}>
+              Siguiente
+            </button>
+          </>
+        )}
 
-
-        {/* PASO 4 */}
+        {/* PASO 4: Categoría e imagen */}
         {step === 4 && (
           <>
             <h3>Paso 4: Categoría e imagen</h3>
@@ -241,9 +224,7 @@ const RegistroArbol = () => {
               name="categoria"
               value={formData.categoria}
               onChange={handleChange}
-              className={`form-select ${
-                errors.categoria ? "is-invalid" : ""
-              }`}
+              className={`form-select ${errors.categoria ? "is-invalid" : ""}`}
             >
               <option value="">Seleccione categoría</option>
               <option value="Brinzales">Brinzales (DAP ≤ 10 cm)</option>
@@ -267,11 +248,7 @@ const RegistroArbol = () => {
               className="form-control"
             />
 
-            <button
-              type="submit"
-              className="btn btn-success mt-3"
-              disabled={loading}
-            >
+            <button type="submit" className="btn btn-success mt-3" disabled={loading}>
               {loading ? "Guardando..." : "Enviar"}
             </button>
           </>
