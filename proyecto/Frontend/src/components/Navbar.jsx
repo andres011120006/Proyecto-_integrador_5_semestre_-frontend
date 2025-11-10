@@ -13,9 +13,10 @@ const Navbar = () => {
             src={logo}
             alt="Logo"
             height="70"
-            className="me-2"
+            
           />
-          Inventario Forestal Colombia
+
+            Inventario Forestal Colombia
         </a>
 
         <button

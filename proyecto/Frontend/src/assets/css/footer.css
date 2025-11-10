@@ -17,7 +17,7 @@
 
 /* Contenedor principal */
 .footer .container {
-  max-width: 1200px;
+  max-width: 13000px;
   margin: auto;
 }
 
@@ -92,6 +92,7 @@
 @media (max-width: 768px) {
   .footer .row {
     flex-direction: column;
+    
   }
   .footer-column {
     margin-bottom: 20px;

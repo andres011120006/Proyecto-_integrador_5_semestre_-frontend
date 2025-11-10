@@ -9,14 +9,15 @@ export class IncidenciaController {
     try {
       const incidencia = await this.registrarIncidencia.run(req.body);
       res.status(201).json({
-        mensaje: "✅ Incidencia registrada correctamente",
+        mensaje: " Incidencia registrada correctamente",
         incidencia
       });
     } catch (error) {
       res.status(400).json({
-        mensaje: "❌ Error al registrar la incidencia",
+        mensaje: " Error al registrar la incidencia",
         error: error.message
       });
     }
   }
 }
+
