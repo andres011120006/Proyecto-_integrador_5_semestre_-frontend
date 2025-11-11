@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import carrusel1 from '../assets/img/niels-van-altena-baUqXWWvN1c-unsplash.jpg'
 import carrusel2 from '../assets/img/robin-noguier-CZJp1S4bZos-unsplash.jpg'
 import carrusel3 from '../assets/img/urban-vintage-78A265wPiO4-unsplash.jpg'
-import card1 from '../assets/img/foto_card_conglomerado.jpeg'
+import card1 from '../assets/img/logo_incidencia_2.png'
 import card2 from '../assets/img/pexels-mahima-518693-1250260.jpg'
 import card3 from '../assets/img/matthew-smith-Rfflri94rs8-unsplash.jpg'
 import card4 from '../assets/img/lukas-blazek-mcSDtbWXUZU-unsplash.jpg'
@@ -189,13 +189,13 @@ const InicioCon = () => {
             <img
               src={card1}
               className="card-img-top"
-              alt="Conglomerado"
+              alt="incidencia conglomerado"
             />
           </a>
           <div className="card-body">
-            <h4 className="card-title">Registrar conglomerado y brigada</h4>
+            <h4 className="card-title">Registrar incidencias de conglomerados</h4>
             <p className="card-text">
-              Da click en la imagen para realizar un registro sobre el conglomerado y la brigada
+              Da click en la imagen para realizar un registro sobre una incidencia de conglomerado
             </p>
           </div>
         </div>

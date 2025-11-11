@@ -1,20 +1,227 @@
-/* Contenedor formulario */
+/* =====================================================
+   FORMULARIO DE REGISTRO DE INCIDENCIAS - ESTILO MODERNO
+   ===================================================== */
+
+/* ---------- GENERAL ---------- */
+body {
+  background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%);
+  font-family: "Poppins", sans-serif;
+}
+
 .registroCon-container {
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  max-width: 850px;
+  max-width: 1100px;
+  margin: 4rem auto;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  padding: 3rem 4rem;
+  animation: fadeIn 0.8s ease-in-out;
+  border: 1px solid #e0e0e0;
+}
+
+/* ---------- TITULOS ---------- */
+.registroCon-title {
+  font-size: 2.3rem;
+  font-weight: 800;
+  text-align: center;
+  color: #2e7d32;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.registroCon-title::after {
+  content: "";
+  display: block;
+  width: 70px;
+  height: 4px;
+  background: linear-gradient(90deg, #4caf50, #81c784);
+  margin: 0.5rem auto 0;
+  border-radius: 5px;
+}
+
+/* ---------- INSTRUCCIONES ---------- */
+.registroCon-instructions {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #6c757d;
+  margin-bottom: 2rem;
+}
+
+/* ---------- FORMULARIO ---------- */
+.registroCon-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ---------- LABELS ---------- */
+.registroCon-label {
+  font-weight: 600;
+  color: #1b5e20;
+  margin-bottom: 0.7rem;
+  font-size: 1.2rem;
+}
+
+.registroCon-required {
+  color: #d32f2f;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+/* ---------- INPUTS / SELECT / TEXTAREA ---------- */
+.registroCon-select,
+.registroCon-textarea {
   width: 100%;
-  padding: 2.5rem 2rem;
-  margin: auto;
-  animation: fadeInUp 0.8s ease forwards;
-  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  border: 2px solid #dcdcdc;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  background-color: #fafafa;
+  transition: all 0.3s ease;
+}
+
+.registroCon-select:focus,
+.registroCon-textarea:focus {
+  border-color: #4caf50;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.2);
+  transform: translateY(-2px);
+}
+
+.is-valid {
+  border-color: #4caf50 !important;
+}
+
+.is-invalid {
+  border-color: #d32f2f !important;
+}
+
+/* ---------- TEXTAREA ---------- */
+.registroCon-textarea {
+  resize: vertical;
+  min-height: 150px;
+  line-height: 1.6;
+}
+
+/* ---------- TEXTOS DE AYUDA ---------- */
+.form-text {
+  font-size: 0.95rem;
+  color: #6c757d;
+  margin-top: 0.3rem;
+}
+
+/* ---------- ALERTAS ---------- */
+.alert {
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  font-size: 1rem;
+  border-left: 6px solid;
+}
+
+.alert-info {
+  background: #e3f2fd;
+  color: #0d47a1;
+  border-color: #2196f3;
+}
+
+.alert-danger {
+  background: #ffebee;
+  color: #b71c1c;
+  border-color: #e53935;
+}
+
+.alert-success {
+  background: #e8f5e9;
+  color: #1b5e20;
+  border-color: #4caf50;
+}
+
+/* ---------- TARJETAS DE INFORMACIÓN ---------- */
+.categorias-info h6 {
+  font-weight: 700;
+  color: #2e7d32;
+  margin-bottom: 1rem;
+}
+
+.card {
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   background: #fff;
 }
 
-/* Animación fadeInUp */
-@keyframes fadeInUp {
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.card-text {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+/* ---------- BOTONES ---------- */
+.registroCon-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.registroCon-btn {
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 220px;
+}
+
+.registroCon-btn.btn-primary {
+  background: linear-gradient(135deg, #43a047, #2e7d32);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(67, 160, 71, 0.3);
+}
+
+.registroCon-btn.btn-primary:hover {
+  background: linear-gradient(135deg, #388e3c, #1b5e20);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(67, 160, 71, 0.45);
+}
+
+.registroCon-btn-reset {
+  background: #eeeeee;
+  color: #333;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.registroCon-btn-reset:hover {
+  background: #e0e0e0;
+  transform: translateY(-2px);
+}
+
+/* ---------- ICONOS Y SPINNER ---------- */
+.fa-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ---------- ANIMACIONES ---------- */
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(40px);
   }
   to {
     opacity: 1;
@@ -22,105 +229,24 @@
   }
 }
 
-.registroCon-title {
-  color: #2e7d32;
-  text-align: center;
-  margin-bottom: 2rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-.registroCon-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.registroCon-label {
-  font-weight: 600;
-  color: #1b5e20;
-  margin-bottom: 0.3rem;
-  transition: color 0.3s ease;
-}
-
-.registroCon-required {
-  color: #d32f2f;
-}
-
-.registroCon-input {
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 1.25rem;
-  border: 2px solid #a5d6a7;
-  border-radius: 6px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.registroCon-input:focus {
-  border-color: #388e3c;
-  box-shadow: 0 0 8px #66bb6a88;
-  outline: none;
-}
-
-/* Botones */
-.registroCon-buttons {
-  display: flex;
-  gap: 1rem;
-  margin-top: 0.5rem;
-}
-
-.registroCon-btn {
-  flex: 1;
-  padding: 0.9rem 0;
-  font-size: 1.2rem;
-  font-weight: 700;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  color: white;
-  background-color: #4caf50;
-  box-shadow: 0 4px 8px #388e3caa;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  user-select: none;
-}
-
-.registroCon-btn:hover {
-  background-color: #388e3c;
-  transform: scale(1.05);
-}
-
-.registroCon-btn:active {
-  transform: scale(0.98);
-}
-
-.registroCon-btn-reset {
-  background-color: #81c784;
-  box-shadow: 0 4px 8px #519657aa;
-}
-
-.registroCon-btn-reset:hover {
-  background-color: #519657;
-}
-
-/* Mensaje éxito */
-.registroCon-success {
-  background-color: #c8e6c9;
-  border: 1.5px solid #2e7d32;
-  color: #2e7d32;
-  padding: 1rem;
-  border-radius: 6px;
-  margin-top: 1.5rem;
-  text-align: center;
-  font-weight: 600;
-  animation: fadeIn 0.5s ease forwards;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 768px) {
+  .registroCon-container {
+    padding: 2rem;
   }
-  to {
-    opacity: 1;
+
+  .registroCon-title {
+    font-size: 1.8rem;
+  }
+
+  .registroCon-buttons {
+    flex-direction: column;
+  }
+
+  .registroCon-btn {
+    width: 100%;
   }
 }
+/* =====================================================
+   FIN DEL ESTILO DE REGISTRO DE INCIDENCIAS
+   ===================================================== */
