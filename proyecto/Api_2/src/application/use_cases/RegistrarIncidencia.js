@@ -1,11 +1,13 @@
 import { RegistrarIncidenciaUseCase } from "../../domain/services/RegistrarIncidenciaUseCase.js";
+import{IncidenciaInputPort} from "../interfaces/IncidenciaInputPort.js"
 
-export class RegistrarIncidencia {
+// debe implemnetar  intput_port//
+export class RegistrarIncidencia extends IncidenciaInputPort {
   constructor(outputPort) {
     this.useCase = new RegistrarIncidenciaUseCase(outputPort);
   }
 
-  async run(data) {
+  async RegistrarIncidencia(data) {
     return await this.useCase.execute(data);
   }
 }
