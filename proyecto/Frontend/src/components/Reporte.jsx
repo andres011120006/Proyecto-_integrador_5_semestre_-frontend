@@ -1,3 +1,4 @@
+// Importar dependencias de React y otras librerías
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { jsPDF } from "jspdf";
@@ -5,21 +6,31 @@ import "jspdf-autotable";
 import Chart from "chart.js/auto";
 import "../assets/css/reporte.css";
 
+// Definir el componente funcional ReportePDFProfesional
 const ReportePDFProfesional = () => {
+  // Estado para almacenar la lista de conglomerados
   const [conglomerados, setConglomerados] = useState([]);
+  // Estado para almacenar el ID del conglomerado seleccionado
   const [idConglomerado, setIdConglomerado] = useState("");
+  // Estado para almacenar los datos del reporte
   const [data, setData] = useState(null);
+  // Estado para manejar el estado de carga
   const [loading, setLoading] = useState(false);
+  // Estado para manejar errores
   const [error, setError] = useState("");
+  // Estado para almacenar el blob del PDF generado
   const [pdfBlob, setPdfBlob] = useState(null);
+  // Estado para controlar la visibilidad de la previsualización
   const [previewVisible, setPreviewVisible] = useState(false);
+  // Estado para manejar la generación de previsualización
   const [generatingPreview, setGeneratingPreview] = useState(false);
 
+  // Referencias para los gráficos y el iframe de previsualización
   const chartSubparcelasRef = useRef(null);
   const chartCategoriasRef = useRef(null);
   const previewIframeRef = useRef(null);
 
-  // 🔹 Cargar conglomerados para el select
+  // Efecto para cargar los conglomerados al montar el componente
   useEffect(() => {
     const fetchConglomerados = async () => {
       try {
@@ -33,7 +44,7 @@ const ReportePDFProfesional = () => {
     fetchConglomerados();
   }, []);
 
-  // 🔹 Cargar datos del reporte
+  // Efecto para cargar datos del reporte cuando se selecciona un conglomerado
   useEffect(() => {
     if (!idConglomerado) return;
     setData(null);
@@ -55,7 +66,7 @@ const ReportePDFProfesional = () => {
     fetchReporte();
   }, [idConglomerado]);
 
-  // 🔹 Generar gráficos en pantalla
+  // Efecto para generar gráficos cuando hay datos disponibles
   useEffect(() => {
     if (!data) return;
 
@@ -63,7 +74,7 @@ const ReportePDFProfesional = () => {
     if (chartSubparcelasRef.current) chartSubparcelasRef.current.destroy();
     if (chartCategoriasRef.current) chartCategoriasRef.current.destroy();
 
-    // Gráfico de Subparcelas - Basado en la estructura de tu backend
+    // Preparar datos para gráfico de subparcelas
     const subparcelas = data.subparcelas || [];
     const subparcelasOrdenadas = [1, 2, 3, 4].map(num => {
       const sub = subparcelas.find(s => s.numero_subparcela === num) || {};
@@ -74,7 +85,7 @@ const ReportePDFProfesional = () => {
       };
     });
 
-    // Gráfico de Subparcelas
+    // Crear gráfico de barras para subparcelas
     const ctxSubparcelas = document.getElementById("chart-subparcelas");
     if (ctxSubparcelas) {
       chartSubparcelasRef.current = new Chart(ctxSubparcelas.getContext("2d"), {
@@ -123,7 +134,7 @@ const ReportePDFProfesional = () => {
       });
     }
 
-    // Gráfico de Categorías - Basado en la estructura de tu backend
+    // Crear gráfico de doughnut para categorías
     const categorias = data.categorias || [];
     const ctxCategorias = document.getElementById("chart-categorias");
     if (ctxCategorias && categorias.length > 0) {
@@ -159,7 +170,7 @@ const ReportePDFProfesional = () => {
 
   }, [data]);
 
-  // 🔹 Función para generar el PDF
+  // Función principal para generar el PDF
   const generarPDF = async (forPreview = false) => {
     if (!data) return;
     
@@ -173,7 +184,7 @@ const ReportePDFProfesional = () => {
       const doc = new jsPDF();
       let y = 20;
 
-      // Logo y Encabezado
+      // Encabezado del PDF con fondo verde
       doc.setFillColor(46, 125, 50);
       doc.rect(0, 0, 210, 40, 'F');
       
@@ -190,7 +201,7 @@ const ReportePDFProfesional = () => {
 
       y = 50;
 
-      // Información del Conglomerado
+      // Sección de información del conglomerado
       doc.setTextColor(0, 0, 0);
       doc.setFontSize(14);
       doc.setFont("helvetica", "bold");
@@ -200,7 +211,6 @@ const ReportePDFProfesional = () => {
       doc.setFontSize(11);
       doc.setFont("helvetica", "normal");
       
-      // Información básica del conglomerado
       const conglomeradoInfo = [
         `• Nombre: ${data.conglomeradoNombre || "N/A"}`,
         `• Categoría más frecuente: ${data.categoriaMasFrecuente || "N/A"}`,
@@ -219,7 +229,7 @@ const ReportePDFProfesional = () => {
       });
       y += 10;
 
-      // Tabla de Subparcelas - Adaptada a tu estructura de datos
+      // Tabla de distribución por subparcelas
       if (data.subparcelas && data.subparcelas.length > 0) {
         doc.setFont("helvetica", "bold");
         doc.text("DISTRIBUCIÓN POR SUBPARCELAS", 14, y);
@@ -256,7 +266,7 @@ const ReportePDFProfesional = () => {
         y = doc.lastAutoTable.finalY + 15;
       }
 
-      // Estadísticas Resumen
+      // Sección de estadísticas resumen
       doc.setFont("helvetica", "bold");
       if (y > 250) {
         doc.addPage();
@@ -267,7 +277,7 @@ const ReportePDFProfesional = () => {
 
       doc.setFont("helvetica", "normal");
       
-      // Calcular estadísticas adicionales
+      // Calcular estadísticas
       const totalIndividuos = data.individuos?.length || 0;
       const totalMuestras = data.muestras?.length || 0;
       const subparcelaMasPoblada = data.subparcelas?.reduce((max, sub) => 
@@ -291,7 +301,7 @@ const ReportePDFProfesional = () => {
       });
       y += 10;
 
-      // Función para agregar gráficos al PDF
+      // Función auxiliar para agregar gráficos al PDF
       const addChartToPDF = (chartId, title, yPosition) => {
         const canvas = document.getElementById(chartId);
         if (canvas) {
@@ -337,14 +347,14 @@ const ReportePDFProfesional = () => {
       const pdfBlobGenerated = doc.output("blob");
       
       if (forPreview) {
-        // Para previsualización
+        // Para previsualización: crear URL y asignar al iframe
         const url = URL.createObjectURL(pdfBlobGenerated);
         if (previewIframeRef.current) {
           previewIframeRef.current.src = url;
         }
         setPreviewVisible(true);
       } else {
-        // Para descarga
+        // Para descarga: almacenar el blob
         setPdfBlob(pdfBlobGenerated);
       }
 
@@ -360,6 +370,7 @@ const ReportePDFProfesional = () => {
     }
   };
 
+  // Función para descargar el PDF generado
   const descargarPDF = () => {
     if (!pdfBlob) return;
     const url = URL.createObjectURL(pdfBlob);
@@ -372,10 +383,12 @@ const ReportePDFProfesional = () => {
     URL.revokeObjectURL(url);
   };
 
+  // Función para previsualizar el PDF
   const previsualizarPDF = () => {
     generarPDF(true);
   };
 
+  // Función para cerrar la previsualización
   const cerrarPreview = () => {
     setPreviewVisible(false);
     if (previewIframeRef.current) {
@@ -384,6 +397,7 @@ const ReportePDFProfesional = () => {
     }
   };
 
+  // Renderizado del componente
   return (
     <div className="reporte-container">
       <div className="reporte-header">
@@ -425,7 +439,7 @@ const ReportePDFProfesional = () => {
 
       {data && (
         <div className="reporte-content">
-          {/* Información Resumen */}
+          {/* Sección de resumen */}
           <div className="resumen-section">
             <h3>Resumen del Conglomerado: {data.conglomeradoNombre}</h3>
             <div className="resumen-grid">
@@ -448,7 +462,7 @@ const ReportePDFProfesional = () => {
             </div>
           </div>
 
-          {/* Gráficos */}
+          {/* Sección de gráficos */}
           <div className="charts-section">
             <h3>Gráficos y Visualizaciones</h3>
             <div className="charts-grid">
@@ -461,7 +475,7 @@ const ReportePDFProfesional = () => {
             </div>
           </div>
 
-          {/* Botones de Acción */}
+          {/* Botones de acción */}
           <div className="action-buttons">
             <button 
               onClick={previsualizarPDF} 
@@ -534,4 +548,5 @@ const ReportePDFProfesional = () => {
   );
 };
 
+// Exportar el componente como default
 export default ReportePDFProfesional;

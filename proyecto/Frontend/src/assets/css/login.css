@@ -1,200 +1,224 @@
+/* Importa la fuente "Poppins" desde Google Fonts con grosores 400 y 600 */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
+/* ====================== RESETEO GLOBAL ====================== */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-  text-decoration: none;
-  list-style: none;
+  margin: 0; /* Elimina los márgenes predeterminados */
+  padding: 0; /* Elimina el relleno predeterminado */
+  box-sizing: border-box; /* Incluye el padding y el borde en el tamaño total del elemento */
+  font-family: "Poppins", sans-serif; /* Aplica la fuente global */
+  text-decoration: none; /* Quita subrayados de enlaces */
+  list-style: none; /* Quita viñetas o números en listas */
 }
 
+/* ====================== FONDO PRINCIPAL ====================== */
 .fon {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(90deg, #e2e2e2, #94e7b9);
+  display: flex; /* Usa flexbox para centrar contenido */
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
+  min-height: 100vh; /* Ocupa toda la altura visible del navegador */
+  background: linear-gradient(90deg, #e2e2e2, #94e7b9); /* Degradado de fondo */
 }
 
-/* ====================== CONTAINER ====================== */
+/* ====================== CONTENEDOR PRINCIPAL ====================== */
 .login-container {
-  position: relative;
-  width: 850px;
-  height: 550px;
-  background: #fff;
-  margin: 20px;
-  border-radius: 30px;
-  box-shadow: 0 0 30px rgba(0, 0, 0, .2);
-  overflow: hidden;
+  position: relative; /* Permite posicionar elementos hijos de forma absoluta */
+  width: 850px; /* Ancho fijo del contenedor */
+  height: 550px; /* Altura fija */
+  background: #fff; /* Fondo blanco */
+  margin: 20px; /* Separación externa */
+  border-radius: 30px; /* Bordes redondeados */
+  box-shadow: 0 0 30px rgba(0, 0, 0, .2); /* Sombra suave alrededor */
+  overflow: hidden; /* Oculta el contenido que sobresalga */
 }
 
+/* Estilo general para títulos dentro del contenedor */
 .login-container h1 {
-  font-size: 36px;
-  margin: -10px 0;
+  font-size: 36px; /* Tamaño de fuente grande */
+  margin: -10px 0; /* Margen superior negativo para ajustar posición */
 }
 
+/* Estilo general para párrafos dentro del contenedor */
 .login-container p {
-  font-size: 14.5px;
-  margin: 15px 0;
+  font-size: 14.5px; /* Tamaño de fuente pequeño */
+  margin: 15px 0; /* Margen superior e inferior */
 }
 
-/* ====================== FORM ====================== */
+/* ====================== FORMULARIO ====================== */
 .login-form-box {
-  position: absolute;
-  right: 0;
-  width: 50%;
-  height: 100%;
-  background: #fff;
-  display: flex;
-  align-items: center;
-  color: #333;
-  text-align: center;
-  padding: 40px;
-  z-index: 1;
-  transition: .6s ease-in-out 1.2s, visibility 0s 1s;
+  position: absolute; /* Posicionado dentro del contenedor principal */
+  right: 0; /* Alineado al lado derecho */
+  width: 50%; /* Ocupa la mitad del contenedor */
+  height: 100%; /* Ocupa toda la altura */
+  background: #fff; /* Fondo blanco */
+  display: flex; /* Usa flexbox para alinear contenido */
+  align-items: center; /* Centra verticalmente */
+  color: #333; /* Color de texto gris oscuro */
+  text-align: center; /* Centra el texto */
+  padding: 40px; /* Espaciado interno */
+  z-index: 1; /* Capa superior al fondo */
+  transition: .6s ease-in-out 1.2s, visibility 0s 1s; /* Animación suave al cambiar estado */
 }
 
+/* Cuando el contenedor tiene la clase "active", mueve el formulario a la izquierda */
 .login-container.active .login-form-box {
   right: 50%;
 }
 
-/* ====================== INPUTS ====================== */
+/* ====================== CAMPOS DE ENTRADA ====================== */
 .login-input-box {
-  position: relative;
-  margin: 30px 0;
+  position: relative; /* Permite posicionar el ícono dentro del campo */
+  margin: 30px 0; /* Espaciado vertical entre campos */
 }
 
+/* Estilo del input */
 .login-input-box input {
-  width: 100%;
-  padding: 13px 50px 13px 20px;
-  background: #eee;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-  font-size: 16px;
-  color: #333;
-  font-weight: 500;
+  width: 100%; /* Ocupa todo el ancho disponible */
+  padding: 13px 50px 13px 20px; /* Espaciado interno: arriba, derecha, abajo, izquierda */
+  background: #eee; /* Fondo gris claro */
+  border-radius: 8px; /* Bordes redondeados */
+  border: none; /* Sin borde */
+  outline: none; /* Quita el borde azul al hacer foco */
+  font-size: 16px; /* Tamaño del texto */
+  color: #333; /* Color del texto */
+  font-weight: 500; /* Peso medio de fuente */
 }
 
+/* Estilo del texto de marcador (placeholder) */
 .login-input-box input::placeholder {
-  color: #888;
-  font-weight: 400;
+  color: #888; /* Color gris */
+  font-weight: 400; /* Fuente más ligera */
 }
 
+/* Ícono dentro del input */
 .login-input-box i {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 20px;
+  position: absolute; /* Posicionado respecto al campo */
+  right: 20px; /* A la derecha del input */
+  top: 50%; /* Centrado verticalmente */
+  transform: translateY(-50%); /* Ajuste exacto de centrado */
+  font-size: 20px; /* Tamaño del ícono */
 }
 
-/* ====================== BOTÓN ====================== */
+/* ====================== BOTÓN DE LOGIN ====================== */
 .login-btn {
-  width: 100%;
-  height: 48px;
-  background: #63e68a;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  color: #fff;
-  font-weight: 600;
+  width: 100%; /* Ocupa todo el ancho */
+  height: 48px; /* Altura del botón */
+  background: #63e68a; /* Color verde */
+  border-radius: 8px; /* Bordes redondeados */
+  box-shadow: 0 0 10px rgba(0, 0, 0, .1); /* Sombra ligera */
+  border: none; /* Sin borde */
+  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+  font-size: 16px; /* Tamaño del texto */
+  color: #fff; /* Texto blanco */
+  font-weight: 600; /* Fuente seminegrita */
 }
 
-/* ====================== TOGGLE ====================== */
+/* ====================== PANEL DE INFORMACIÓN ====================== */
 .login-toggle-box {
-  position: absolute;
-  width: 100%;
-  height: 100%;
+  position: absolute; /* Posiciona sobre todo el contenedor */
+  width: 100%; /* Ancho total */
+  height: 100%; /* Altura total */
 }
 
+/* Círculo de color verde animado detrás del formulario */
 .login-toggle-box::before {
-  content: '';
+  content: ''; /* Elemento pseudo antes (fondo decorativo) */
   position: absolute;
-  left: -250%;
-  width: 300%;
-  height: 100%;
-  background: #6cf077;
-  border-radius: 150px;
-  z-index: 2;
-  transition: 1.8s ease-in-out;
+  left: -250%; /* Comienza fuera del contenedor hacia la izquierda */
+  width: 300%; /* Cubre más del ancho para crear el efecto curvo */
+  height: 100%; /* Altura completa */
+  background: #6cf077; /* Color verde más intenso */
+  border-radius: 150px; /* Bordes redondeados para formar curva */
+  z-index: 2; /* Capa superior */
+  transition: 1.8s ease-in-out; /* Animación suave al cambiar */
 }
 
+/* Cuando el contenedor está activo, mueve el círculo verde hacia la derecha */
 .login-container.active .login-toggle-box::before {
   left: 50%;
 }
 
+/* Panel de texto (bienvenida, mensajes, etc.) */
 .login-toggle-panel {
   position: absolute;
-  width: 50%;
+  width: 50%; /* Ocupa mitad del contenedor */
   height: 100%;
-  color: #fff;
+  color: #fff; /* Texto blanco */
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 2;
-  transition: .6s ease-in-out;
+  flex-direction: column; /* Coloca elementos uno debajo del otro */
+  justify-content: center; /* Centra verticalmente */
+  align-items: center; /* Centra horizontalmente */
+  z-index: 2; /* Por encima del fondo verde */
+  transition: .6s ease-in-out; /* Transición suave */
 }
 
+/* Panel izquierdo (mensaje de bienvenida) */
 .login-toggle-panel.login-toggle-left {
-  left: 0;
-  transition-delay: 1.2s;
+  left: 0; /* Ubicado en el lado izquierdo */
+  transition-delay: 1.2s; /* Retardo de animación */
 }
 
+/* Cuando el contenedor está activo, el panel se mueve fuera de pantalla */
 .login-container.active .login-toggle-panel.login-toggle-left {
-  left: -50%;
-  transition-delay: .6s;
+  left: -50%; /* Se mueve hacia la izquierda */
+  transition-delay: .6s; /* Cambia el retardo de animación */
 }
 
-/* ====================== RESPONSIVE ====================== */
+/* ====================== DISEÑO RESPONSIVO ====================== */
 @media screen and (max-width: 650px) {
+  /* Ajusta el tamaño del contenedor al alto del dispositivo */
   .login-container {
     height: calc(100vh - 40px);
   }
 
+  /* El formulario se posiciona en la parte inferior */
   .login-form-box {
     bottom: 0;
-    width: 100%;
-    height: 70%;
+    width: 100%; /* Ocupa todo el ancho */
+    height: 70%; /* 70% de la altura del contenedor */
   }
 
+  /* En modo activo, el formulario se eleva hacia arriba */
   .login-container.active .login-form-box {
     right: 0;
     bottom: 30%;
   }
 
+  /* Ajusta la posición y tamaño del círculo verde decorativo */
   .login-toggle-box::before {
     left: 0;
-    top: -270%;
+    top: -270%; /* Se mueve fuera del contenedor hacia arriba */
     width: 100%;
-    height: 300%;
-    border-radius: 20vw;
+    height: 300%; /* Más alto para cubrir el fondo */
+    border-radius: 20vw; /* Curva adaptable a pantallas pequeñas */
   }
 
+  /* En modo activo, mueve el fondo verde hacia la parte inferior */
   .login-container.active .login-toggle-box::before {
     left: 0;
     top: 70%;
   }
 
+  /* El panel ocupa solo la parte superior */
   .login-toggle-panel {
     width: 100%;
     height: 30%;
   }
 
+  /* Ajusta el panel de bienvenida a la parte superior */
   .login-toggle-panel.login-toggle-left {
     top: 0;
   }
 }
 
+/* Ajustes para pantallas muy pequeñas */
 @media screen and (max-width: 400px) {
+  /* Reduce el padding interno del formulario */
   .login-form-box {
     padding: 20px;
   }
 
+  /* Reduce el tamaño del título en el panel */
   .login-toggle-panel h1 {
     font-size: 30px;
   }

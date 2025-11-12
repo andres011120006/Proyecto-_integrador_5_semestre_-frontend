@@ -1,25 +1,34 @@
+// Importar dependencias de React y otras librerías
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import '../assets/css/registroCon.css';
 
+// Definir el componente funcional RegistroIncidencias
 const RegistroIncidencias = () => {
+  // Estado para almacenar los datos del formulario
   const [formData, setFormData] = useState({
     conglomerado: "",
     categoria: "",
     descripcion: ""
   });
 
+  // Estado para almacenar la lista de conglomerados
   const [conglomerados, setConglomerados] = useState([]);
+  // Estado para manejar errores de validación
   const [errors, setErrors] = useState({});
+  // Estado para mostrar mensaje de éxito
   const [success, setSuccess] = useState(false);
+  // Estado para manejar el estado de carga durante el envío
   const [loading, setLoading] = useState(false);
+  // Estado para manejar la carga inicial de conglomerados
   const [loadingConglomerados, setLoadingConglomerados] = useState(true);
 
-  // 🔹 Traer conglomerados desde el backend
+  // Efecto para cargar los conglomerados al montar el componente
   useEffect(() => {
     const fetchConglomerados = async () => {
       try {
         setLoadingConglomerados(true);
+        // Realizar petición GET para obtener conglomerados
         const res = await axios.get("http://localhost:4000/api/conglomerados");
         setConglomerados(res.data);
       } catch (err) {
@@ -34,6 +43,7 @@ const RegistroIncidencias = () => {
     fetchConglomerados();
   }, []);
 
+  // Definir las categorías de incidencia disponibles
   const categoriasIncidencia = [
     { 
       id: "menor", 
@@ -47,6 +57,7 @@ const RegistroIncidencias = () => {
     }
   ];
 
+  // Manejador de cambios en los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ 
@@ -63,17 +74,21 @@ const RegistroIncidencias = () => {
     }
   };
 
+  // Función de validación del formulario
   const validate = () => {
     let newErrors = {};
 
+    // Validar que se haya seleccionado un conglomerado
     if (!formData.conglomerado.trim()) {
       newErrors.conglomerado = "Debe seleccionar un conglomerado";
     }
 
+    // Validar que se haya seleccionado una categoría
     if (!formData.categoria.trim()) {
       newErrors.categoria = "Debe seleccionar una categoría de incidencia";
     }
 
+    // Validar la descripción (requerida y longitud mínima)
     if (!formData.descripcion.trim()) {
       newErrors.descripcion = "Debe ingresar una descripción de la incidencia";
     } else if (formData.descripcion.trim().length < 10) {
@@ -84,6 +99,7 @@ const RegistroIncidencias = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Manejador de envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -91,19 +107,19 @@ const RegistroIncidencias = () => {
       setLoading(true);
       
       try {
-        // Preparar datos para enviar
+        // Preparar datos para enviar al servidor
         const incidenciaData = {
           conglomerado_id: formData.conglomerado,
           categoria: formData.categoria,
           descripcion: formData.descripcion,
           fecha_registro: new Date().toISOString(),
-          // En un caso real, aquí se incluiría el ID del jefe de brigada autenticado
-          jefe_brigada_id: 1 // Mock - en producción vendría del contexto de autenticación
+          // ID mock del jefe de brigada (en producción vendría de autenticación)
+          jefe_brigada_id: 1
         };
 
         console.log("Enviando incidencia:", incidenciaData);
 
-        // 🔹 Enviar incidencia al backend
+        // Enviar datos de la incidencia al servidor
         const response = await axios.post(
           "http://localhost:4000/api/incidencias", 
           incidenciaData
@@ -114,7 +130,7 @@ const RegistroIncidencias = () => {
         // Mostrar notificación de éxito
         setSuccess(true);
         
-        // Limpiar formulario
+        // Limpiar formulario después del envío exitoso
         setFormData({
           conglomerado: "",
           categoria: "",
@@ -136,15 +152,18 @@ const RegistroIncidencias = () => {
     }
   };
 
+  // Función para obtener la descripción de la categoría seleccionada
   const getCategoriaDescripcion = () => {
     const categoria = categoriasIncidencia.find(c => c.id === formData.categoria);
     return categoria ? categoria.descripcion : "";
   };
 
+  // Función para obtener el conglomerado seleccionado
   const getConglomeradoSeleccionado = () => {
     return conglomerados.find(c => c.id === parseInt(formData.conglomerado));
   };
 
+  // Renderizado del componente
   return (
     <div className="registroCon-container my-5" role="main" aria-labelledby="formTitle">
       <h1 id="formTitle" className="registroCon-title">Registrar Incidencia</h1>
@@ -315,7 +334,7 @@ const RegistroIncidencias = () => {
           </div>
         </div>
 
-        {/* Botones */}
+        {/* Botones de acción */}
         <div className="registroCon-buttons mt-4">
           <button 
             type="submit" 
@@ -373,4 +392,5 @@ const RegistroIncidencias = () => {
   );
 };
 
+// Exportar el componente como default
 export default RegistroIncidencias;

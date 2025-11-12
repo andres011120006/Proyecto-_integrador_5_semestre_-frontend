@@ -1,12 +1,12 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
-import RegistroConglo from '../components/RegistroConglo'
+import RegistroIncidencias from '../components/RegistroIncidencias'
 
 export const RegistroConglomerado = () => {
   return (
     <>
         <Navbar/>
-        <RegistroConglo/>
+        <RegistroIncidencias/>
     </>
   )
 }
