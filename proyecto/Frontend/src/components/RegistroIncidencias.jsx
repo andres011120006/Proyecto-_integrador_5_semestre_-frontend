@@ -28,13 +28,13 @@ const RegistroIncidencias = () => {
     const fetchConglomerados = async () => {
       try {
         setLoadingConglomerados(true);
-        // Realizar petición GET para obtener conglomerados
+        // Realizar petición GET para obtener conglomerados (API local 4000)
         const res = await axios.get("http://localhost:4000/api/conglomerados");
         setConglomerados(res.data);
       } catch (err) {
         console.error("Error cargando conglomerados:", err);
-        setErrors({ 
-          conglomerados: "Error al cargar los conglomerados. Intente nuevamente." 
+        setErrors({
+          conglomerados: "Error al cargar los conglomerados. Intente nuevamente."
         });
       } finally {
         setLoadingConglomerados(false);
@@ -45,13 +45,13 @@ const RegistroIncidencias = () => {
 
   // Definir las categorías de incidencia disponibles
   const categoriasIncidencia = [
-    { 
-      id: "menor", 
+    {
+      id: "menor",
       nombre: "Incidencia Menor",
       descripcion: "No pone en riesgo la vida o integridad de la brigada y no interfiere en la exploración"
     },
-    { 
-      id: "mayor", 
+    {
+      id: "mayor",
       nombre: "Incidencia Mayor",
       descripcion: "Pone en peligro la integridad o vida de la brigada o no permite continuar con la exploración"
     }
@@ -60,11 +60,11 @@ const RegistroIncidencias = () => {
   // Manejador de cambios en los campos del formulario
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ 
-      ...formData, 
-      [name]: value 
+    setFormData({
+      ...formData,
+      [name]: value
     });
-    
+
     // Limpiar error del campo cuando el usuario empiece a escribir/seleccionar
     if (errors[name]) {
       setErrors({
@@ -105,23 +105,20 @@ const RegistroIncidencias = () => {
 
     if (validate()) {
       setLoading(true);
-      
+
       try {
-        // Preparar datos para enviar al servidor
+        // Preparar datos para enviar al servidor (MongoDB)
         const incidenciaData = {
-          conglomerado_id: formData.conglomerado,
+          nombre_conglomerado: formData.conglomerado,
           categoria: formData.categoria,
-          descripcion: formData.descripcion,
-          fecha_registro: new Date().toISOString(),
-          // ID mock del jefe de brigada (en producción vendría de autenticación)
-          jefe_brigada_id: 1
+          descripcion: formData.descripcion
         };
 
-        console.log("Enviando incidencia:", incidenciaData);
+        console.log(" Enviando incidencia a Mongo:", incidenciaData);
 
-        // Enviar datos de la incidencia al servidor
+        // Enviar datos de la incidencia al backend (API de incidencias en puerto 5000)
         const response = await axios.post(
-          "http://localhost:4000/api/incidencias", 
+          "http://localhost:5000/api/incidencias",
           incidenciaData
         );
 
@@ -129,7 +126,7 @@ const RegistroIncidencias = () => {
 
         // Mostrar notificación de éxito
         setSuccess(true);
-        
+
         // Limpiar formulario después del envío exitoso
         setFormData({
           conglomerado: "",
@@ -142,9 +139,9 @@ const RegistroIncidencias = () => {
         setTimeout(() => setSuccess(false), 5000);
 
       } catch (error) {
-        console.error("Error al registrar incidencia:", error);
-        setErrors({ 
-          submit: "Error al registrar la incidencia. Intente nuevamente." 
+        console.error(" Error al registrar incidencia:", error);
+        setErrors({
+          submit: "Error al registrar la incidencia. Intente nuevamente."
         });
       } finally {
         setLoading(false);
@@ -167,7 +164,7 @@ const RegistroIncidencias = () => {
   return (
     <div className="registroCon-container my-5" role="main" aria-labelledby="formTitle">
       <h1 id="formTitle" className="registroCon-title">Registrar Incidencia</h1>
-      
+
       <div className="registroCon-instructions mb-4">
         <p className="text-muted">
           Complete el siguiente formulario para registrar una incidencia en el trabajo de campo.
@@ -180,7 +177,7 @@ const RegistroIncidencias = () => {
           <label htmlFor="conglomerado" className="registroCon-label">
             Conglomerado <span className="registroCon-required">*</span>
           </label>
-          
+
           {loadingConglomerados ? (
             <div className="alert alert-info">
               <i className="fas fa-spinner fa-spin me-2"></i>
@@ -203,35 +200,21 @@ const RegistroIncidencias = () => {
             >
               <option value="">Seleccione un conglomerado</option>
               {conglomerados.map((conglomerado) => (
-                <option key={conglomerado.id} value={conglomerado.id}>
-                  {conglomerado.nombre} 
+                <option key={conglomerado.id} value={conglomerado.nombre}>
+                  {conglomerado.nombre}
                   {conglomerado.estado && ` - Estado: ${conglomerado.estado}`}
                 </option>
               ))}
             </select>
           )}
-          
+
           {errors.conglomerado && (
             <div className="invalid-feedback">{errors.conglomerado}</div>
           )}
-          
+
           {conglomerados.length === 0 && !loadingConglomerados && (
             <div className="form-text text-warning">
               No hay conglomerados disponibles para registrar incidencias.
-            </div>
-          )}
-          
-          {getConglomeradoSeleccionado() && (
-            <div className="form-text text-info mt-2">
-              <strong>Información del conglomerado:</strong>
-              <br />
-              Nombre: {getConglomeradoSeleccionado().nombre}
-              {getConglomeradoSeleccionado().estado && (
-                <> | Estado: {getConglomeradoSeleccionado().estado}</>
-              )}
-              {getConglomeradoSeleccionado().latitud && getConglomeradoSeleccionado().longitud && (
-                <> | Ubicación: {getConglomeradoSeleccionado().latitud.toFixed(4)}, {getConglomeradoSeleccionado().longitud.toFixed(4)}</>
-              )}
             </div>
           )}
         </div>
@@ -297,7 +280,7 @@ const RegistroIncidencias = () => {
           </div>
         </div>
 
-        {/* Información de categorías */}
+        {/* Información de categorías - CARDS AGREGADAS AQUÍ */}
         <div className="categorias-info mb-4">
           <h6 className="mb-3">Información sobre categorías:</h6>
           <div className="row">
@@ -336,8 +319,8 @@ const RegistroIncidencias = () => {
 
         {/* Botones de acción */}
         <div className="registroCon-buttons mt-4">
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="registroCon-btn btn-primary"
             disabled={loading || conglomerados.length === 0}
           >
@@ -385,7 +368,7 @@ const RegistroIncidencias = () => {
           <i className="fas fa-check-circle me-2"></i>
           <strong>¡Incidencia registrada exitosamente!</strong>
           <br />
-          La incidencia ha sido guardada en la base de datos y el estado del conglomerado ha sido actualizado según la categoría.
+          La incidencia ha sido guardada 
         </div>
       )}
     </div>

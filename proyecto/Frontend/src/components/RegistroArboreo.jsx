@@ -18,6 +18,36 @@ const RegistroArbol = () => {
     imagen: null,
   });
 
+
+    // Definir las categorías de indivduo arboreo disponibles
+  const categoriasIndividuo = [
+    {
+      id: "Brinzales",
+      nombre: "Brinzales ",
+      descripcion: " son los Son los individuos arbóreos más jóvenes del bosque, con un DAP menor a 10 cm. Se encuentran en la etapa inicial de desarrollo, son delgados, de poca altura y muy vulnerables a factores ambientales. Representan la regeneración natural del bosque. Con un DAP menor a 10 cm"
+
+    },
+    { 
+      id: "Latizales",
+      nombre: "Latizales",
+      descripcion: "Son los individuos arbóreos en fase intermedia de crecimiento,tienen mayor resistencia, crecen en altura y comienzan a competir intensamente por luz,agua y nutrientes. Son la base del futuro del bosque. DAP entre 10 y 30 cm."
+
+    },
+        { 
+      id: "Fustal",
+      nombre: "Fustal",
+      descripcion: "Son individuos arbóreos con un DAP mayor a 30 cm, que ya alcanzaron la madurez estructural.Presentan troncos robustos y rectos, y forman parte importante del dosel del bosque. (DAP entre 30 y 50 cm)."
+
+    },
+        { 
+      id: "Fustal grande",
+      nombre: "Fustal grande",
+      descripcion: "Son los individuos arbóreos más desarrollados dentro de los fustales, Se destacan por su gran tamaño, longevidad y valor ecológico,con un DAP superior a 50 cm. "
+
+
+    }
+  ];
+
   // Estado que controla el paso actual del formulario (1 a 4)
   const [step, setStep] = useState(1);
 
@@ -261,15 +291,77 @@ const RegistroArbol = () => {
               className={`form-select ${errors.categoria ? "is-invalid" : ""}`}
             >
               <option value="">Seleccione categoría</option>
-              <option value="Brinzales">Brinzales (DAP ≤ 10 cm)</option>
-              <option value="Latizales">Latizales (10 cm ≤ DAP &lt; 30 cm)</option>
-              <option value="Fustal">Fustal (30 cm ≤ DAP &lt; 50 cm)</option>
-              <option value="Fustal grande">Fustal grande (DAP ≥ 50 cm)</option>
+              <option value="Brinzales">Brinzales </option>
+              <option value="Latizales">Latizales </option>
+              <option value="Fustal">Fustal </option>
+              <option value="Fustal grande">Fustal grande</option>
             </select>
 
             {errors.categoria && (
               <div className="invalid-feedback">{errors.categoria}</div>
             )}
+            {/* Información de categorías - CARDS AGREGADAS AQUÍ */}
+   <div className="categorias-info mb-4">
+  <h6 className="mb-3">Información sobre categorías:</h6>
+  <div className="row">
+    <div className="col-md-6 mb-3">
+      <div className="card border-success">
+        <div className="card-body">
+          <h6 className="card-title text-success">
+            Brinzales
+          </h6>
+          <p className="card-text small">
+            son los Son los individuos arbóreos más jóvenes del bosque, Se encuentran en la etapa inicial de desarrollo, son delgados, de poca altura y muy vulnerables a factores ambientales. Representan la regeneración natural del bosque. Con un DAP menor a 10 cm
+            <br />
+            <strong>Ejemplos:</strong> Árboles jóvenes, retoños, plántulas, etc.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div className="col-md-6 mb-3">
+      <div className="card border-success">
+        <div className="card-body">
+          <h6 className="card-title text-success">
+            Latizales
+          </h6>
+          <p className="card-text small">
+            Son los individuos arbóreos en fase intermedia de crecimiento,tienen mayor resistencia, crecen en altura y comienzan a competir intensamente por luz,agua y nutrientes. Son la base del futuro del bosque. DAP entre 10 y 30 cm
+            <br />
+            <strong>Ejemplos:</strong> Árboles en crecimiento, juveniles, etc.  
+          </p>
+        </div>
+      </div>
+    </div>
+    <div className="col-md-6 mb-3">
+      <div className="card border-success">
+        <div className="card-body">
+          <h6 className="card-title text-success">
+            Fustal
+          </h6>
+          <p className="card-text small">
+            Son individuos arbóreos que ya alcanzaron la madurez estructural.Presentan troncos robustos y rectos, y forman parte importante del dosel del bosque. (DAP entre 30 y 50 cm).
+            <br />
+            <strong>Ejemplos:</strong> Árboles maduros, etc.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div className="col-md-6 mb-3">
+      <div className="card border-success">
+        <div className="card-body">
+          <h6 className="card-title text-success">
+            Fustal grande
+          </h6>
+          <p className="card-text small">
+            Son los individuos arbóreos más desarrollados dentro de los fustales, Se destacan por su gran tamaño, longevidad y valor ecológico,con un DAP superior a 50 cm. 
+            <br />
+            <strong>Ejemplos:</strong> Árboles centenarios, gigantes, etc. 
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
             {/* Campo para subir imagen del árbol */}
             <label htmlFor="imagen" className="mt-3">
