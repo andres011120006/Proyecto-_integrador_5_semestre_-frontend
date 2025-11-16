@@ -38,7 +38,7 @@ router.post("/", async (req, res) => {
     });
 
     res.status(201).json({
-      mensaje: "✅ Incidencia creada correctamente",
+      mensaje: " Incidencia creada correctamente",
       data: nuevaIncidencia,
     });
   } catch (error) {

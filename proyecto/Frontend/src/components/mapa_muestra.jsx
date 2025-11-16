@@ -49,19 +49,38 @@ const ChangeView = ({ center }) => {
  * - individuoSeleccionado: Objeto con el individuo actualmente seleccionado.
  */
 const MapaMuestra = ({ individuos = [], onSelect, center, individuoSeleccionado }) => {
+  
+  // ✅ CORRECCIÓN CRÍTICA: Asegurar que individuos sea siempre un array
+  const individuosArray = Array.isArray(individuos) ? individuos : [];
+  
+  console.log("MapaMuestra - individuos recibidos:", individuos);
+  console.log("MapaMuestra - individuosArray procesado:", individuosArray);
 
-  // Determina la posición inicial del mapa
-  const initialPosition =
-    center && Array.isArray(center) && center.length === 2
-      ? center // Si hay centro definido, usa ese
-      : individuos.length > 0 && individuos[0].latitud && individuos[0].longitud
-      ? [individuos[0].latitud, individuos[0].longitud] // Si hay individuos, centra en el primero
-      : [4.711, -74.0721]; // Si no hay datos, centra en Bogotá (por defecto)
-
-  // Filtra los individuos que tengan coordenadas válidas
-  const individuosValidos = individuos.filter(
-    (i) => typeof i.latitud === "number" && typeof i.longitud === "number"
+  // ✅ CORRECCIÓN: Filtra los individuos que tengan coordenadas válidas
+  const individuosValidos = individuosArray.filter(
+    (i) => i && typeof i.latitud === "number" && typeof i.longitud === "number"
   );
+
+  console.log("MapaMuestra - individuosValidos:", individuosValidos);
+
+  // ✅ CORRECCIÓN: Determina la posición inicial del mapa de forma segura
+  const getInitialPosition = () => {
+    // Si hay centro definido y válido, usa ese
+    if (center && Array.isArray(center) && center.length === 2) {
+      return center;
+    }
+    
+    // Si hay individuos válidos, centra en el primero
+    if (individuosValidos.length > 0) {
+      const primerIndividuo = individuosValidos[0];
+      return [primerIndividuo.latitud, primerIndividuo.longitud];
+    }
+    
+    // Si no hay datos, centra en Bogotá (por defecto)
+    return [4.711, -74.0721];
+  };
+
+  const initialPosition = getInitialPosition();
 
   return (
     // Contenedor principal del mapa con estilos responsivos
@@ -86,31 +105,74 @@ const MapaMuestra = ({ individuos = [], onSelect, center, individuoSeleccionado 
         {/* Actualiza la vista del mapa cuando cambia el centro */}
         <ChangeView center={initialPosition} />
 
-        {/* Renderiza un marcador por cada individuo válido */}
+        {/* ✅ CORRECCIÓN: Renderiza un marcador por cada individuo válido */}
         {individuosValidos.map((individuo) => {
           const isSelected = individuoSeleccionado && individuo.id === individuoSeleccionado.id;
           return (
             <Marker
-              key={individuo.id} // Clave única para React
+              key={individuo.id || `ind-${individuo.latitud}-${individuo.longitud}`} // Clave única para React
               position={[individuo.latitud, individuo.longitud]} // Posición del marcador
               icon={isSelected ? individuoSeleccionadoIcon : individuoIcon} // Ícono dinámico
               eventHandlers={{
                 // Al hacer clic en el marcador, se ejecuta onSelect
-                click: () => onSelect(individuo),
+                click: () => {
+                  if (onSelect && typeof onSelect === 'function') {
+                    onSelect(individuo);
+                  }
+                },
               }}
             >
               {/* Popup informativo del marcador */}
               <Popup>
-                 <strong>{individuo.nombre || "Individuo"}</strong>
-                <br />
-                Lat: {individuo.latitud.toFixed(5)} <br />
-                Lng: {individuo.longitud.toFixed(5)}
-                {/* Muestra etiqueta verde si está seleccionado */}
-                {isSelected && <p style={{ color: "green", fontWeight: "bold" }}> Seleccionado</p>}
+                <div>
+                  <strong>Individuo {individuo.id || "N/A"}</strong>
+                  <br />
+                  {individuo.dap && <><strong>DAP:</strong> {individuo.dap} cm<br /></>}
+                  {individuo.categoria && <><strong>Categoría:</strong> {individuo.categoria}<br /></>}
+                  {individuo.azimut && <><strong>Azimut:</strong> {individuo.azimut}°<br /></>}
+                  {individuo.distancia && <><strong>Distancia:</strong> {individuo.distancia} m<br /></>}
+                  <strong>Coordenadas:</strong><br />
+                  Lat: {individuo.latitud.toFixed(6)}<br />
+                  Lng: {individuo.longitud.toFixed(6)}
+                  {/* Muestra etiqueta verde si está seleccionado */}
+                  {isSelected && (
+                    <p style={{ color: "green", fontWeight: "bold", marginTop: "5px" }}>
+                      ✅ SELECCIONADO
+                    </p>
+                  )}
+                </div>
               </Popup>
             </Marker>
           );
         })}
+
+        {/* ✅ CORRECCIÓN: Marcador adicional para el individuo seleccionado si no está en la lista */}
+        {individuoSeleccionado && 
+         individuoSeleccionado.latitud && 
+         individuoSeleccionado.longitud &&
+         !individuosValidos.some(ind => ind.id === individuoSeleccionado.id) && (
+          <Marker
+            position={[individuoSeleccionado.latitud, individuoSeleccionado.longitud]}
+            icon={individuoSeleccionadoIcon}
+          >
+            <Popup>
+              <div>
+                <strong>Individuo Seleccionado</strong>
+                <br />
+                <strong>ID:</strong> {individuoSeleccionado.id}
+                <br />
+                {individuoSeleccionado.dap && <><strong>DAP:</strong> {individuoSeleccionado.dap} cm<br /></>}
+                {individuoSeleccionado.categoria && <><strong>Categoría:</strong> {individuoSeleccionado.categoria}<br /></>}
+                <strong>Coordenadas:</strong><br />
+                Lat: {individuoSeleccionado.latitud.toFixed(6)}<br />
+                Lng: {individuoSeleccionado.longitud.toFixed(6)}
+                <p style={{ color: "green", fontWeight: "bold", marginTop: "5px" }}>
+                  ✅ SELECCIONADO
+                </p>
+              </div>
+            </Popup>
+          </Marker>
+        )}
       </MapContainer>
     </div>
   );

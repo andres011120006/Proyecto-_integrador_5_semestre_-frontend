@@ -2,24 +2,23 @@ import { supabase } from "../config/supabaseClient.js";
 
 export const createMuestra = async (req, res) => {
   try {
-    console.log("📥 Datos recibidos en backend:", req.body);
-    console.log("📁 Archivo recibido:", req.file ? req.file.originalname : "No hay archivo");
+    console.log("📨 Datos recibidos en backend:", req.body);
+    console.log("📸 Archivo recibido:", req.file ? req.file.originalname : "No hay archivo");
 
     const { 
       nombreConglomerado, 
       subparcela, 
       categoria, 
-      latitud, 
-      longitud,
-      individuoSeleccionado 
+      idIndividuo
     } = req.body;
     
     const imagen = req.file;
 
     // Validar campos obligatorios
-    if (!nombreConglomerado || !categoria) {
+    if (!nombreConglomerado || !categoria || !idIndividuo) {
       return res.status(400).json({ 
-        error: "Los campos nombreConglomerado y categoria son obligatorios" 
+        success: false,
+        error: "Los campos nombreConglomerado, categoria e idIndividuo son obligatorios" 
       });
     }
 
@@ -27,51 +26,48 @@ export const createMuestra = async (req, res) => {
 
     // Subir imagen si existe
     if (imagen) {
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("imagenes-muestra")
-        .upload(`muestras/${Date.now()}_${imagen.originalname}`, imagen.buffer, {
-          contentType: imagen.mimetype,
-          upsert: false,
-        });
+      try {
+        const fileName = `muestras/${Date.now()}_${imagen.originalname}`;
+        console.log("📤 Subiendo imagen:", fileName);
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("imagenes-muestras")
+          .upload(fileName, imagen.buffer, {
+            contentType: imagen.mimetype,
+            upsert: false,
+          });
 
-      if (uploadError) {
-        console.error("❌ Error subiendo imagen:", uploadError);
-        throw uploadError;
+        if (uploadError) {
+          console.error("❌ Error subiendo imagen:", uploadError);
+          throw uploadError;
+        }
+
+        const { data: publicUrl } = supabase.storage
+          .from("imagenes-muestras")
+          .getPublicUrl(uploadData.path);
+
+        imagenUrl = publicUrl.publicUrl;
+        console.log("✅ Imagen subida:", imagenUrl);
+      } catch (imageError) {
+        console.error("⚠️ Error al subir imagen, continuando sin imagen:", imageError);
       }
-
-      const { data: publicUrl } = supabase.storage
-        .from("imagenes-muestras")
-        .getPublicUrl(uploadData.path);
-
-      imagenUrl = publicUrl.publicUrl;
-      console.log("✅ Imagen subida:", imagenUrl);
     }
 
     // Preparar datos para insertar
     const muestraData = {
       nombre_conglomerado: nombreConglomerado,
-      subparcela: subparcela,
+      subparcela: parseInt(subparcela) || 1,
       tipo_muestra: categoria,
-      latitud: latitud ? parseFloat(latitud) : null,
-      longitud: longitud ? parseFloat(longitud) : null,
+      id_individuo: parseInt(idIndividuo),
       imagen_url: imagenUrl,
       fecha_registro: new Date().toISOString()
     };
 
-    // Si hay individuo seleccionado, guardarlo como JSON
-    if (individuoSeleccionado) {
-      try {
-        muestraData.individuo_seleccionado = JSON.parse(individuoSeleccionado);
-      } catch (e) {
-        console.warn("⚠️ No se pudo parsear individuo_seleccionado:", e.message);
-      }
-    }
+    console.log("💾 Insertando en tabla 'muestra':", muestraData);
 
-    console.log("💾 Insertando en BD:", muestraData);
-
-    // Insertar en la base de datos
+    // ✅ INSERTAR EN LA TABLA SINGULAR 'muestra'
     const { data, error } = await supabase
-      .from("muestra")
+      .from("muestra") // ✅ Nombre singular
       .insert([muestraData])
       .select();
 
@@ -89,7 +85,7 @@ export const createMuestra = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("❌ Error al registrar muestra:", error);
+    console.error("💥 Error al registrar muestra:", error);
     res.status(500).json({ 
       success: false,
       error: "Error interno del servidor",

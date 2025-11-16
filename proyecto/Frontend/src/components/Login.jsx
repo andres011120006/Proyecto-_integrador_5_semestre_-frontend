@@ -1,5 +1,5 @@
 // Importa React para poder usar JSX y componentes funcionales
-import React from "react";
+import React, { useState } from "react";
 // Importa el hook useNavigate de React Router para redirigir a otras rutas
 import { useNavigate } from "react-router-dom";
 // Importa los estilos CSS específicos del login
@@ -9,35 +9,80 @@ import "../assets/css/login.css";
 const Login = () => {
   // Hook para manejar la navegación entre rutas
   const navigate = useNavigate();
+  
+  // Estado para manejar el loading y errores
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   // Función que maneja el evento de envío del formulario
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); // Evita que la página se recargue al enviar el formulario
 
     // Obtiene los valores de los campos del formulario y elimina espacios al inicio y final
     const usuario = e.target.usuario.value.trim();
-    const correo = e.target.correo.value.trim();
     const contrasena = e.target.contrasena.value.trim();
 
     // Validación: Verifica que todos los campos estén llenos
-    if (!usuario || !correo || !contrasena) {
+    if (!usuario || !contrasena) {
       alert("Por favor, llena todos los campos.");
       return; // Detiene la ejecución si falta algún campo
     }
 
-    // Validación: Verifica que el correo contenga el carácter '@'
-    if (!correo.includes("@")) {
-      alert("El correo debe contener un '@'.");
-      return;
-    }
+    setLoading(true);
+    setError("");
 
-    // Validación de credenciales (ejemplo estático para pruebas)
-    if (usuario === "juan" && correo === "juan@gmail.com" && contrasena === "123") {
-      // Si las credenciales son correctas, redirige a la ruta "/inicio"
-      navigate("/inicio");
-    } else {
-      // Si las credenciales no coinciden, muestra un mensaje de error
-      alert("Usuario, correo o contraseña incorrectos.");
+    try {
+      // Realizar la petición a la API para verificar el usuario
+      const response = await fetch('http://localhost:4000/usuarios', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          usuario: usuario,
+          contrasena: contrasena
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Si las credenciales son correctas, redirigir según el rol
+        const userRole = data.rol;
+        
+        // Guardar información del usuario en localStorage
+        localStorage.setItem('userInfo', JSON.stringify({
+          id: data.id_brigadista,
+          nombre: usuario,
+          rol: userRole,
+          loggedIn: true,
+          timestamp: new Date().toISOString()
+        }));
+
+        // Redirigir según el rol
+        switch (userRole) {
+          case 'botanico':
+            navigate("/botanico_dashboard");
+            break;
+          case 'jefe de brigada':
+            navigate("/jefe_brigada_dashboard");
+            break;
+          case 'brigadista':
+            navigate("/brigadista_dashboard");
+            break;
+          default:
+            navigate("/inicio");
+        }
+        
+      } else {
+        // Si las credenciales no coinciden, muestra un mensaje de error
+        setError(data.message || "Usuario o contraseña incorrectos.");
+      }
+    } catch (error) {
+      console.error('Error en el login:', error);
+      setError("Error de conexión. Por favor, intenta nuevamente.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,6 +96,13 @@ const Login = () => {
           <form id="loginForm" className="login-form" onSubmit={handleSubmit}>
             <h1 className="login-title">Inicio de sesión</h1>
 
+            {/* Mostrar error si existe */}
+            {error && (
+              <div className="alert alert-danger" role="alert">
+                {error}
+              </div>
+            )}
+
             {/* Campo de usuario */}
             <div className="login-input-box">
               <input 
@@ -59,20 +111,9 @@ const Login = () => {
                 id="usuario" 
                 placeholder="Usuario" 
                 required 
+                disabled={loading}
               />
               <i className="bx bxs-user"></i> {/* Ícono de usuario */}
-            </div>
-
-            {/* Campo de correo electrónico */}
-            <div className="login-input-box">
-              <input 
-                type="text" 
-                name="correo" 
-                id="correo" 
-                placeholder="Correo electrónico" 
-                required 
-              />
-              <i className="bx bxs-envelope"></i> {/* Ícono de correo */}
             </div>
 
             {/* Campo de contraseña */}
@@ -83,12 +124,19 @@ const Login = () => {
                 id="contrasena" 
                 placeholder="Contraseña" 
                 required 
+                disabled={loading}
               />
               <i className="bx bxs-lock-alt"></i> {/* Ícono de candado */}
             </div>
 
             {/* Botón para enviar el formulario */}
-            <button type="submit" className="login-btn">Ingresar</button>
+            <button 
+              type="submit" 
+              className="login-btn"
+              disabled={loading}
+            >
+              {loading ? "Verificando..." : "Ingresar"}
+            </button>
           </form>
         </div>
 
