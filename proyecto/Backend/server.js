@@ -2,16 +2,19 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 
+// Importar rutas
 import conglomeradosRoutes from "./routes/conglomeradosRoutes.js";
 import usuariosRoutes from "./routes/usuariosRoutes.js";
 import individuosRoutes from "./routes/individuosRoutes.js";
 import muestrasRoutes from "./routes/muestrasRoutes.js";
+import notificacionesRoutes from "./routes/notificacionesRoutes.js";
+import reportesRoutes from "./routes/reportesRoutes.js";  // ← AÑADIDO
 
 dotenv.config();
 
 const app = express();
 
-// ✅ CONFIGURACIÓN MEJORADA DE CORS
+// Configuración de CORS y middleware
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
@@ -21,51 +24,33 @@ app.use(cors({
 
 app.use(express.json());
 
-// ✅ MIDDLEWARE MEJORADO - Manejar OPTIONS primero
+// Middleware de logging
 app.use((req, res, next) => {
-  // Manejar pre-flight requests inmediatamente
   if (req.method === 'OPTIONS') {
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     return res.status(200).end();
   }
-  
+
   console.log(`📍 ${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
   next();
 });
 
-// ... el resto de tu código se mantiene igual ...
+// Ruta de prueba
 app.get("/", (req, res) => {
   res.json({ 
     message: "✅ Servidor funcionando correctamente",
-    timestamp: new Date().toISOString(),
-    routes: {
-      conglomerados: {
-        all: "GET /api/conglomerados",
-        paginated: "GET /api/conglomerados/paginados"
-      },
-      usuarios: {
-        login: "POST /usuarios",
-        updateConglomerado: "PUT /usuarios/conglomerado",
-        all: "GET /usuarios"
-      },
-      individuos: {
-        create: "POST /api/individuos",
-        multiple: "POST /api/individuos/multiple", 
-        get: "GET /api/individuos"
-      },
-      muestras: {
-        create: "POST /api/muestras"
-      }
-    }
+    timestamp: new Date().toISOString()
   });
 });
 
-// Rutas principales
+// Registrar todas las rutas
 app.use("/api/conglomerados", conglomeradosRoutes);
 app.use("/usuarios", usuariosRoutes);
 app.use("/api/individuos", individuosRoutes);
 app.use("/api/muestras", muestrasRoutes);
+app.use("/api/notificaciones", notificacionesRoutes);
+app.use("/api/reportes", reportesRoutes); // ← NUEVA RUTA DE REPORTES
 
 // Manejo de rutas no encontradas
 app.use((req, res) => {
@@ -75,14 +60,18 @@ app.use((req, res) => {
     message: `Ruta no encontrada: ${req.method} ${req.originalUrl}`,
     availableRoutes: [
       "GET /api/conglomerados",
-      "GET /api/conglomerados/paginados", 
+      "GET /api/conglomerados/paginados",
       "POST /usuarios",
       "PUT /usuarios/conglomerado",
       "GET /usuarios",
       "POST /api/individuos",
       "POST /api/individuos/multiple",
       "GET /api/individuos",
-      "POST /api/muestras"
+      "POST /api/muestras",
+      "POST /api/notificaciones/incidencia-mayor",
+      "POST /api/notificaciones/confirmar",
+      "GET /api/notificaciones/pendientes/:usuario",
+      "GET /api/reportes/:id_conglomerado"    // ← NUEVA EN EL LISTADO
     ]
   });
 });
@@ -94,11 +83,15 @@ app.listen(PORT, () => {
   console.log("📋 Rutas configuradas:");
   console.log("   GET  /api/conglomerados");
   console.log("   GET  /api/conglomerados/paginados");
-  console.log("   POST /usuarios"); 
+  console.log("   POST /usuarios");
   console.log("   PUT  /usuarios/conglomerado");
   console.log("   GET  /usuarios");
   console.log("   POST /api/individuos");
   console.log("   POST /api/individuos/multiple");
   console.log("   GET  /api/individuos");
   console.log("   POST /api/muestras");
+  console.log("   POST /api/notificaciones/incidencia-mayor");
+  console.log("   POST /api/notificaciones/confirmar");
+  console.log("   GET  /api/notificaciones/pendientes/:usuario");
+  console.log("   GET  /api/reportes/:id_conglomerado");   // ← NUEVO
 });

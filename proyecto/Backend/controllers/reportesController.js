@@ -1,97 +1,79 @@
 import { supabase } from "../config/supabaseClient.js";
 
-// 🔹 Controlador debug (para probar en CMD / Postman)
-export const obtenerReporteConglomeradoDebug = async (req, res) => {
-  const { id_conglomerado } = req.params;
-
-  try {
-    const { data: conglomerado } = await supabase
-      .from("conglomerados")
-      .select("*")
-      .eq("id_conglomerado", id_conglomerado)
-      .single();
-
-    const { data: subparcelas } = await supabase
-      .from("subparcela")
-      .select("*")
-      .eq("id_conglomerado", id_conglomerado);
-
-    const { data: individuos } = await supabase
-      .from("individuo_arboreo")
-      .select("*")
-      .eq("nombre_conglomerado", conglomerado.nombre);
-
-    const idsIndividuos = individuos.map(i => i.id);
-    const { data: muestras } = await supabase
-      .from("muestra")
-      .select("*")
-      .in("id_individuo", idsIndividuos);
-
-    res.json({
-      conglomerado,
-      subparcelas,
-      individuos,
-      muestras
-    });
-
-  } catch (error) {
-    res.status(500).json({ message: "Error interno", error });
-  }
-};
-
-// 🔹 Controlador principal (para React / PDF)
 export const obtenerReporteConglomerado = async (req, res) => {
-  const { id_conglomerado } = req.params;
-
   try {
-    const { data: conglomerado } = await supabase
+    const { id_conglomerado } = req.params;
+
+    console.log("📄 Generando reporte simple para conglomerado:", id_conglomerado);
+
+    if (!id_conglomerado) {
+      return res.status(400).json({
+        success: false,
+        message: "El parámetro id_conglomerado es obligatorio"
+      });
+    }
+
+    // 1. Obtener datos del conglomerado
+    const { data: conglomerado, error: errorConglomerado } = await supabase
       .from("conglomerados")
       .select("*")
       .eq("id_conglomerado", id_conglomerado)
       .single();
 
-    const { data: subparcelas } = await supabase
-      .from("subparcela")
-      .select("*")
-      .eq("id_conglomerado", id_conglomerado);
+    if (errorConglomerado || !conglomerado) {
+      console.error("❌ Conglomerado no encontrado:", errorConglomerado);
+      return res.status(404).json({
+        success: false,
+        message: "Conglomerado no encontrado"
+      });
+    }
 
-    const { data: individuos } = await supabase
+    // 2. Obtener conteo de individuos
+    const { count: totalIndividuos, error: errorIndividuos } = await supabase
       .from("individuo_arboreo")
-      .select("*")
+      .select("*", { count: "exact", head: true })
       .eq("nombre_conglomerado", conglomerado.nombre);
 
-    const idsIndividuos = individuos.map(i => i.id);
-    const { data: muestras } = await supabase
+    if (errorIndividuos) {
+      console.error("❌ Error obteniendo individuos:", errorIndividuos);
+    }
+
+    // 3. Obtener conteo de muestras
+    const { count: totalMuestras, error: errorMuestras } = await supabase
       .from("muestra")
-      .select("*")
-      .in("id_individuo", idsIndividuos);
+      .select("*", { count: "exact", head: true })
+      .eq("nombre_conglomerado", conglomerado.nombre);
 
-    // Contar categorías
-    const categoriaCount = {};
-    individuos.forEach(i => {
-      categoriaCount[i.categoria] = (categoriaCount[i.categoria] || 0) + 1;
-    });
+    if (errorMuestras) {
+      console.error("❌ Error obteniendo muestras:", errorMuestras);
+    }
 
-    const categoriaMasFrecuente = Object.entries(categoriaCount).sort((a,b) => b[1]-a[1])[0]?.[0] || null;
-    const categorias = Object.entries(categoriaCount).map(([nombre, cantidad]) => ({ nombre, cantidad }));
+    // 4. Construir reporte simple
+    const reporte = {
+      id: conglomerado.id_conglomerado,
+      nombre: conglomerado.nombre,
+      ubicacion: {
+        latitud: conglomerado.latitud,
+        longitud: conglomerado.longitud
+      },
+      fecha_generado: new Date().toISOString(),
+      resumen: {
+        total_individuos: totalIndividuos || 0,
+        total_muestras: totalMuestras || 0
+      }
+    };
 
-    // Contar subparcelas
-    const subparcelasConConteos = subparcelas.map(sub => {
-      const individuosSub = individuos.filter(i => i.subparcela == sub.numero_subparcela);
-      const muestrasSub = muestras.filter(m => individuosSub.some(i => i.id === m.id_individuo));
-      return { ...sub, individuos: individuosSub.length, muestras: muestrasSub.length };
-    });
-
+    console.log("📄 Reporte generado correctamente");
     res.json({
-      conglomeradoNombre: conglomerado.nombre,
-      subparcelas: subparcelasConConteos,
-      categoriaMasFrecuente,
-      categorias,
-      individuos,
-      muestras
+      success: true,
+      data: reporte
     });
 
   } catch (error) {
-    res.status(500).json({ message: "Error interno", error });
+    console.error("💥 Error generando reporte:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error interno del servidor"
+    });
   }
 };
