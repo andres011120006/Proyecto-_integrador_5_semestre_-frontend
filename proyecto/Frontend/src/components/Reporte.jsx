@@ -298,16 +298,7 @@ const ReportePDFProfesional = () => {
               </span>
             )}
           </p>
-          <button 
-            className="btn btn-sm btn-outline-secondary mt-2"
-            onClick={() => {
-              console.log("🔍 Debug - UserInfo completo:", userInfo);
-              console.log("🔍 Debug - Conglomerado:", userInfo.conglomerado);
-              console.log("🔍 Debug - ID del conglomerado:", obtenerIdConglomerado());
-            }}
-          >
-            Debug Info
-          </button>
+
         </div>
       </div>
 
