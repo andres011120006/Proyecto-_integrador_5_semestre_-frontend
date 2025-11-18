@@ -2,7 +2,7 @@ import { supabase } from "../config/supabaseClient.js";
 
 export const loginUsuario = async (req, res) => {
   try {
-    console.log("📨 Solicitud de login recibida:", req.body);
+    console.log(" Solicitud de login recibida:", req.body);
     
     const { usuario, contrasena } = req.body;
 
@@ -31,7 +31,7 @@ export const loginUsuario = async (req, res) => {
       .single();
 
     if (error) {
-      console.error("❌ Error en consulta Supabase:", error);
+      console.error(" Error en consulta Supabase:", error);
       return res.status(401).json({
         success: false,
         message: "Error en la base de datos"
@@ -39,25 +39,25 @@ export const loginUsuario = async (req, res) => {
     }
 
     if (!data) {
-      console.log("❌ Usuario no encontrado en la base de datos");
+      console.log(" Usuario no encontrado en la base de datos");
       return res.status(401).json({
         success: false,
         message: "Usuario no encontrado"
       });
     }
 
-    console.log("✅ Usuario encontrado:", data.usuario);
+    console.log(" Usuario encontrado:", data.usuario);
 
     // Verificar la contraseña (en texto plano por ahora)
     if (data.contraseña !== contrasena) {
-      console.log("❌ Contraseña incorrecta");
+      console.log(" Contraseña incorrecta");
       return res.status(401).json({
         success: false,
         message: "Contraseña incorrecta"
       });
     }
 
-    console.log("✅ Login exitoso para:", data.usuario);
+    console.log(" Login exitoso para:", data.usuario);
 
     // Login exitoso
     res.json({
@@ -75,7 +75,7 @@ export const loginUsuario = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("💥 Error en el login:", error);
+    console.error(" Error en el login:", error);
     res.status(500).json({
       success: false,
       message: "Error interno del servidor"
@@ -90,7 +90,7 @@ export const actualizarConglomeradoUsuario = async (req, res) => {
   try {
     const { usuario, conglomerado_id } = req.body;
 
-    console.log(`🔄 Actualizando conglomerado: usuario=${usuario}, conglomerado_id=${conglomerado_id}`);
+    console.log(` Actualizando conglomerado: usuario=${usuario}, conglomerado_id=${conglomerado_id}`);
 
     if (!usuario || !conglomerado_id) {
       return res.status(400).json({
@@ -114,14 +114,14 @@ export const actualizarConglomeradoUsuario = async (req, res) => {
       .single();
 
     if (error) {
-      console.error("❌ Error al actualizar conglomerado:", error);
+      console.error(" Error al actualizar conglomerado:", error);
       return res.status(500).json({
         success: false,
         message: "Error al actualizar conglomerado en la base de datos: " + error.message
       });
     }
 
-    console.log("✅ Conglomerado actualizado correctamente");
+    console.log(" Conglomerado actualizado correctamente");
 
     res.json({
       success: true,
@@ -137,7 +137,7 @@ export const actualizarConglomeradoUsuario = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("💥 Error al actualizar conglomerado:", error);
+    console.error(" Error al actualizar conglomerado:", error);
     res.status(500).json({
       success: false,
       message: "Error interno del servidor"
@@ -147,7 +147,7 @@ export const actualizarConglomeradoUsuario = async (req, res) => {
 
 export const getUsuarios = async (req, res) => {
   try {
-    console.log("📋 Obteniendo lista de usuarios");
+    console.log(" Obteniendo lista de usuarios");
     
     const { data, error } = await supabase
       .from("brigadistas")

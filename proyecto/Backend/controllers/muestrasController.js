@@ -2,8 +2,8 @@ import { supabase } from "../config/supabaseClient.js";
 
 export const createMuestra = async (req, res) => {
   try {
-    console.log("📨 Datos recibidos en backend:", req.body);
-    console.log("📸 Archivo recibido:", req.file ? req.file.originalname : "No hay archivo");
+    console.log(" Datos recibidos en backend:", req.body);
+    console.log(" Archivo recibido:", req.file ? req.file.originalname : "No hay archivo");
 
     const { 
       nombreConglomerado, 
@@ -28,7 +28,7 @@ export const createMuestra = async (req, res) => {
     if (imagen) {
       try {
         const fileName = `muestras/${Date.now()}_${imagen.originalname}`;
-        console.log("📤 Subiendo imagen:", fileName);
+        console.log(" Subiendo imagen:", fileName);
         
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from("imagenes-muestras")
@@ -38,7 +38,7 @@ export const createMuestra = async (req, res) => {
           });
 
         if (uploadError) {
-          console.error("❌ Error subiendo imagen:", uploadError);
+          console.error(" Error subiendo imagen:", uploadError);
           throw uploadError;
         }
 
@@ -47,9 +47,9 @@ export const createMuestra = async (req, res) => {
           .getPublicUrl(uploadData.path);
 
         imagenUrl = publicUrl.publicUrl;
-        console.log("✅ Imagen subida:", imagenUrl);
+        console.log(" Imagen subida:", imagenUrl);
       } catch (imageError) {
-        console.error("⚠️ Error al subir imagen, continuando sin imagen:", imageError);
+        console.error(" Error al subir imagen, continuando sin imagen:", imageError);
       }
     }
 
@@ -63,29 +63,29 @@ export const createMuestra = async (req, res) => {
       fecha_registro: new Date().toISOString()
     };
 
-    console.log("💾 Insertando en tabla 'muestra':", muestraData);
+    console.log(" Insertando en tabla 'muestra':", muestraData);
 
-    // ✅ INSERTAR EN LA TABLA SINGULAR 'muestra'
+    //  INSERTAR EN LA TABLA SINGULAR 'muestra'
     const { data, error } = await supabase
-      .from("muestra") // ✅ Nombre singular
+      .from("muestra") //  Nombre singular
       .insert([muestraData])
       .select();
 
     if (error) {
-      console.error("❌ Error insertando en Supabase:", error);
+      console.error(" Error insertando en Supabase:", error);
       throw error;
     }
 
-    console.log("✅ Muestra guardada en BD:", data);
+    console.log(" Muestra guardada en BD:", data);
 
     res.status(201).json({
       success: true,
-      message: "✅ Muestra registrada correctamente",
+      message: " Muestra registrada correctamente",
       data: data[0],
     });
 
   } catch (error) {
-    console.error("💥 Error al registrar muestra:", error);
+    console.error(" Error al registrar muestra:", error);
     res.status(500).json({ 
       success: false,
       error: "Error interno del servidor",

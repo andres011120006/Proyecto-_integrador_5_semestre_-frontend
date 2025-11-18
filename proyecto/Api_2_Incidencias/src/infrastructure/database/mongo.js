@@ -13,9 +13,9 @@ export const conectarMongo = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log("✅ Conexión exitosa a MongoDB");
+    console.log(" Conexión exitosa a MongoDB");
   } catch (error) {
-    console.error("❌ Error al conectar a MongoDB:", error.message);
+    console.error(" Error al conectar a MongoDB:", error.message);
     process.exit(1); // Finaliza el proceso si no hay conexión
   }
 };

@@ -1,4 +1,4 @@
-// 📁 src/infrastructure/database/models/IncidenciaModel.js
+//  src/infrastructure/database/models/IncidenciaModel.js
 
 import mongoose from "mongoose";
 

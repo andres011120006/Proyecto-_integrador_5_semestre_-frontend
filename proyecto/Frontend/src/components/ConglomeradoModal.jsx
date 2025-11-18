@@ -131,7 +131,7 @@ const ConglomeradoModal = ({ show, onClose, usuario, onConglomeradoSelected }) =
       <div className="conglomerado-modal-content">
         {/* Header del modal */}
         <div className="conglomerado-modal-header">
-          <h3 className="conglomerado-modal-title">🏞️ Seleccionar Conglomerado</h3>
+          <h3 className="conglomerado-modal-title"> Seleccionar Conglomerado</h3>
           <button 
             type="button" 
             className="conglomerado-modal-close" 

@@ -198,7 +198,7 @@ export const getIndividuos = async (req, res) => {
   try {
     const { conglomerado, subparcela } = req.query;
 
-    console.log("🔍 Búsqueda de individuos:", { conglomerado, subparcela });
+    console.log(" Búsqueda de individuos:", { conglomerado, subparcela });
 
     if (!conglomerado || !subparcela) {
       return res.status(400).json({ 
@@ -207,7 +207,7 @@ export const getIndividuos = async (req, res) => {
       });
     }
 
-    // ✅ CONSULTA SIMPLIFICADA - Solo campos esenciales
+    //  CONSULTA SIMPLIFICADA - Solo campos esenciales
     const { data, error } = await supabase
       .from("individuo_arboreo")
       .select("id, nombre_conglomerado, subparcela, dap, azimut, distancia, categoria, imagen_url")
@@ -216,11 +216,11 @@ export const getIndividuos = async (req, res) => {
       .order("id", { ascending: true });
 
     if (error) {
-      console.error("❌ Error en consulta Supabase:", error);
+      console.error(" Error en consulta Supabase:", error);
       throw error;
     }
 
-    console.log(`✅ ${data?.length || 0} individuos encontrados`);
+    console.log(` ${data?.length || 0} individuos encontrados`);
 
     res.json({
       success: true,
@@ -229,7 +229,7 @@ export const getIndividuos = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("💥 Error al obtener individuos:", error);
+    console.error(" Error al obtener individuos:", error);
     res.status(500).json({ 
       success: false,
       error: "Error interno del servidor",

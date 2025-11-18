@@ -32,14 +32,14 @@ app.use((req, res, next) => {
     return res.status(200).end();
   }
 
-  console.log(`📍 ${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
+  console.log(` ${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
   next();
 });
 
 // Ruta de prueba
 app.get("/", (req, res) => {
   res.json({ 
-    message: "✅ Servidor funcionando correctamente",
+    message: " Servidor funcionando correctamente",
     timestamp: new Date().toISOString()
   });
 });
@@ -54,7 +54,7 @@ app.use("/api/reportes", reportesRoutes); // ← NUEVA RUTA DE REPORTES
 
 // Manejo de rutas no encontradas
 app.use((req, res) => {
-  console.log(`❌ Ruta no encontrada: ${req.method} ${req.originalUrl}`);
+  console.log(` Ruta no encontrada: ${req.method} ${req.originalUrl}`);
   res.status(404).json({
     success: false,
     message: `Ruta no encontrada: ${req.method} ${req.originalUrl}`,
@@ -78,9 +78,9 @@ app.use((req, res) => {
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
-  console.log(`📍 URL: http://localhost:${PORT}`);
-  console.log("📋 Rutas configuradas:");
+  console.log(` Servidor corriendo en puerto ${PORT}`);
+  console.log(` URL: http://localhost:${PORT}`);
+  console.log(" Rutas configuradas:");
   console.log("   GET  /api/conglomerados");
   console.log("   GET  /api/conglomerados/paginados");
   console.log("   POST /usuarios");

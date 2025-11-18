@@ -1,4 +1,4 @@
-// 📁 src/infrastructure/adapters/IncidenciaRepositoryAdapter.js
+//  src/infrastructure/adapters/IncidenciaRepositoryAdapter.js
 
 // Importamos el modelo de incidencia desde la base de datos
 import IncidenciaModel from "../database/models/IncidenciaModel.js";

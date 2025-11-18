@@ -5,7 +5,7 @@ export const crearNotificacionIncidencia = async (req, res) => {
   try {
     const { categoria, descripcion, conglomerado_id, usuario_creador } = req.body;
 
-    console.log('🚨 Creando notificación de incidencia mayor:', {
+    console.log(' Creando notificación de incidencia mayor:', {
       categoria, conglomerado_id, usuario_creador
     });
 
@@ -18,7 +18,7 @@ export const crearNotificacionIncidencia = async (req, res) => {
     }
 
     // 1. Obtener información del conglomerado
-    console.log('🔍 Buscando conglomerado:', conglomerado_id);
+    console.log(' Buscando conglomerado:', conglomerado_id);
     const { data: conglomerado, error: errorConglomerado } = await supabase
       .from("conglomerados")
       .select("id_conglomerado, nombre")
@@ -26,17 +26,17 @@ export const crearNotificacionIncidencia = async (req, res) => {
       .single();
 
     if (errorConglomerado || !conglomerado) {
-      console.error('❌ Error obteniendo conglomerado:', errorConglomerado);
+      console.error(' Error obteniendo conglomerado:', errorConglomerado);
       return res.status(404).json({
         success: false,
         message: 'Conglomerado no encontrado'
       });
     }
 
-    console.log('📍 Conglomerado encontrado:', conglomerado.nombre);
+    console.log(' Conglomerado encontrado:', conglomerado.nombre);
 
     // 2. Buscar brigadistas del conglomerado (excluyendo al creador)
-    console.log('🔍 Buscando brigadistas del conglomerado');
+    console.log(' Buscando brigadistas del conglomerado');
     const { data: brigadistas, error: errorBrigadistas } = await supabase
       .from("brigadistas")
       .select("usuario")
@@ -44,14 +44,14 @@ export const crearNotificacionIncidencia = async (req, res) => {
       .neq("usuario", usuario_creador);
 
     if (errorBrigadistas) {
-      console.error('❌ Error buscando brigadistas:', errorBrigadistas);
+      console.error(' Error buscando brigadistas:', errorBrigadistas);
       return res.status(500).json({
         success: false,
         message: 'Error al buscar brigadistas del conglomerado'
       });
     }
 
-    console.log(`👥 Brigadistas encontrados: ${brigadistas?.length || 0}`);
+    console.log(` Brigadistas encontrados: ${brigadistas?.length || 0}`);
 
     if (!brigadistas || brigadistas.length === 0) {
       return res.status(400).json({
@@ -61,7 +61,7 @@ export const crearNotificacionIncidencia = async (req, res) => {
     }
 
     // 3. Crear notificación
-    console.log('💾 Creando notificación en base de datos');
+    console.log(' Creando notificación en base de datos');
     const { data: notificacion, error: errorNotificacion } = await supabase
       .from("notificaciones")
       .insert([{
@@ -77,14 +77,14 @@ export const crearNotificacionIncidencia = async (req, res) => {
       .single();
 
     if (errorNotificacion) {
-      console.error('❌ Error creando notificación:', errorNotificacion);
+      console.error(' Error creando notificación:', errorNotificacion);
       return res.status(500).json({
         success: false,
         message: 'Error al crear notificación en la base de datos'
       });
     }
 
-    console.log('✅ Notificación creada con ID:', notificacion.id);
+    console.log(' Notificación creada con ID:', notificacion.id);
 
     // 4. Crear registros para cada brigadista
     const usuariosNotificadosData = brigadistas.map(brigadista => ({
@@ -93,17 +93,17 @@ export const crearNotificacionIncidencia = async (req, res) => {
       confirmado: false
     }));
 
-    console.log(`👥 Creando ${usuariosNotificadosData.length} registros de usuarios notificados`);
+    console.log(` Creando ${usuariosNotificadosData.length} registros de usuarios notificados`);
     const { error: errorUsuariosNotificados } = await supabase
       .from("notificaciones_usuarios")
       .insert(usuariosNotificadosData);
 
     if (errorUsuariosNotificados) {
-      console.error('❌ Error creando registros de usuarios:', errorUsuariosNotificados);
+      console.error(' Error creando registros de usuarios:', errorUsuariosNotificados);
       // No fallamos la notificación principal si esto falla
     }
 
-    console.log('🎉 Notificación completada exitosamente');
+    console.log(' Notificación completada exitosamente');
 
     res.status(201).json({
       success: true,
@@ -116,7 +116,7 @@ export const crearNotificacionIncidencia = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('💥 Error en crearNotificacionIncidencia:', error);
+    console.error(' Error en crearNotificacionIncidencia:', error);
     res.status(500).json({
       success: false,
       message: 'Error interno del servidor al crear notificación'
@@ -129,7 +129,7 @@ export const confirmarNotificacion = async (req, res) => {
   try {
     const { notificacion_id, usuario } = req.body;
 
-    console.log('✅ Confirmando notificación:', { notificacion_id, usuario });
+    console.log(' Confirmando notificación:', { notificacion_id, usuario });
 
     if (!notificacion_id || !usuario) {
       return res.status(400).json({
@@ -149,14 +149,14 @@ export const confirmarNotificacion = async (req, res) => {
       .eq("usuario", usuario);
 
     if (error) {
-      console.error('❌ Error confirmando notificación:', error);
+      console.error(' Error confirmando notificación:', error);
       return res.status(500).json({
         success: false,
         message: 'Error al confirmar notificación'
       });
     }
 
-    console.log('👍 Notificación confirmada por:', usuario);
+    console.log(' Notificación confirmada por:', usuario);
 
     res.json({
       success: true,
@@ -164,7 +164,7 @@ export const confirmarNotificacion = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('💥 Error en confirmarNotificacion:', error);
+    console.error(' Error en confirmarNotificacion:', error);
     res.status(500).json({
       success: false,
       message: 'Error interno del servidor al confirmar notificación'
@@ -208,14 +208,14 @@ export const getNotificacionesPendientes = async (req, res) => {
       .eq("notificaciones.activa", true);
 
     if (error) {
-      console.error('❌ Error buscando notificaciones:', error);
+      console.error(' Error buscando notificaciones:', error);
       return res.status(500).json({
         success: false,
         message: 'Error al obtener notificaciones'
       });
     }
 
-    console.log(`📬 Notificaciones pendientes encontradas: ${notificacionesUsuario?.length || 0}`);
+    console.log(` Notificaciones pendientes encontradas: ${notificacionesUsuario?.length || 0}`);
 
     // ORDENAR MANUALMENTE POR FECHA (más reciente primero)
     const notificaciones = (notificacionesUsuario || [])
@@ -237,7 +237,7 @@ export const getNotificacionesPendientes = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('💥 Error en getNotificacionesPendientes:', error);
+    console.error(' Error en getNotificacionesPendientes:', error);
     res.status(500).json({
       success: false,
       message: 'Error interno del servidor al obtener notificaciones'

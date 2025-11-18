@@ -5,19 +5,19 @@ import { supabase } from "../config/supabaseClient.js";
  */
 export const getConglomerados = async (req, res) => {
   try {
-    console.log("🔍 Obteniendo todos los conglomerados");
+    console.log(" Obteniendo todos los conglomerados");
     const { data, error } = await supabase.from("conglomerados").select("*");
     
     if (error) {
-      console.error("❌ Error en getConglomerados:", error);
+      console.error(" Error en getConglomerados:", error);
       return res.status(500).json({ error: error.message });
     }
     
-    console.log(`✅ ${data.length} conglomerados encontrados`);
+    console.log(` ${data.length} conglomerados encontrados`);
     res.json(data);
     
   } catch (error) {
-    console.error("💥 Error en getConglomerados:", error);
+    console.error(" Error en getConglomerados:", error);
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
@@ -27,7 +27,7 @@ export const getConglomerados = async (req, res) => {
  */
 export const getConglomeradosPaginados = async (req, res) => {
   try {
-    console.log("📨 Solicitud de conglomerados paginados:", req.query);
+    console.log(" Solicitud de conglomerados paginados:", req.query);
     
     const { page = 1, limit = 20, search = '' } = req.query;
     const offset = (page - 1) * limit;
@@ -40,7 +40,7 @@ export const getConglomeradosPaginados = async (req, res) => {
     // Aplicar búsqueda si existe
     if (search && search.trim() !== '') {
       query = query.ilike('nombre', `%${search.trim()}%`);
-      console.log(`🔍 Búsqueda aplicada: "${search}"`);
+      console.log(` Búsqueda aplicada: "${search}"`);
     }
 
     // Aplicar paginación y ordenamiento
@@ -49,14 +49,14 @@ export const getConglomeradosPaginados = async (req, res) => {
       .order("nombre");
 
     if (error) {
-      console.error("❌ Error en Supabase:", error);
+      console.error(" Error en Supabase:", error);
       return res.status(500).json({
         success: false,
         message: "Error al obtener conglomerados de la base de datos"
       });
     }
 
-    console.log(`✅ ${data.length} conglomerados encontrados (total: ${count})`);
+    console.log(` ${data.length} conglomerados encontrados (total: ${count})`);
 
     // Respuesta exitosa
     res.json({
@@ -69,7 +69,7 @@ export const getConglomeradosPaginados = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("💥 Error en getConglomeradosPaginados:", error);
+    console.error(" Error en getConglomeradosPaginados:", error);
     res.status(500).json({
       success: false,
       message: "Error interno del servidor"
